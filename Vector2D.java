@@ -32,12 +32,24 @@ public class Vector2D implements Vector<Vector2D> {
         return new Vector2D(x * s, y * s);
     }
     
+    public Vector2D multiply(Vector2D v) {
+        return new Vector2D(x * v.x, y * v.y);
+    }
+    
     public Vector2D divide(double s) {
         return new Vector2D(x / s, y / s);
     }
     
     public Vector2D zero() {
         return new Vector2D(0, 0);
+    }
+    
+    public Vector2D unit() {
+        return divide(length());
+    }
+    
+    public Vector2D orth() {
+        return new Vector2D(-y, x);
     }
     
 }

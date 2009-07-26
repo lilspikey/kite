@@ -61,7 +61,7 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
     
     public void update(double dt) {
         integrate(dt);
-        for ( int i = 0; i < 5; i++ ) {
+        for ( int i = 0; i < 20; i++ ) {
             applyConstraints();
         }
     }

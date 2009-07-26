@@ -38,6 +38,18 @@ public abstract class Body<V extends Vector<V>> {
         this.pos = pos;
     }
     
+    public V getPosPrev() {
+        return posPrev;
+    }
+    
+    public void setPosPrev(V pos) {
+        this.posPrev = pos;
+    }
+    
+    public void setVelocity(V v) {
+        posPrev = pos.subtract(v);
+    }
+    
     public double getMass() {
         return mass;
     }

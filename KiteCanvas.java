@@ -14,17 +14,17 @@ public class KiteCanvas extends JPanel {
         space.setGravity( new Vector2D(0, -10) );
         space.addGlobalConstraint(new FloorConstraint());
         
-        Body2D prev = new Body2D(10, 10);
-        prev.setMass(0.01);
+        Body2D prev = new Body2D(1, 10);
+        prev.setMass(1000);
         space.add(prev);
         kiteString.add(prev);
         
         for ( int i = 0; i < 150; i++ ) {
-            Body2D bi = new Body2D(prev.getPos().x + 2, prev.getPos().y + 2);
+            Body2D bi = new Body2D(prev.getPos().x + 2, prev.getPos().y + 0.5);
             space.add(bi);
             space.add(new StickConstraint<Body2D, Vector2D>(bi, prev));
             prev = bi;
-            prev.setMass(0.01);
+            prev.setMass(1);
             kiteString.add(prev);
         }
         
@@ -60,16 +60,38 @@ public class KiteCanvas extends JPanel {
         space.add(new StickConstraint<Body2D, Vector2D>(c1, c3));
         space.add(new StickConstraint<Body2D, Vector2D>(c2, c4));
         
-        
+        // give it initial velocity upwards
+        for ( Body2D b: kite ) {
+            b.setVelocity(new Vector2D(0, 10));
+            b.setMass(10);
+        }
     }
     
     public void tick() {
+        //applyWindForce();
         space.update(0.04);
         repaint();
     }
     
+    public void applyWindForce() {
+        Vector2D wind = new Vector2D(10, 1);
+        
+        Vector2D crossBar = kite.get(1).getPos().subtract( kite.get(3).getPos() ).unit();
+        Vector2D force = wind.multiply(crossBar);
+        
+        //crossBar = kite.get(0).getPos().subtract( kite.get(2).getPos() ).unit();
+        //force = force.add(wind.multiply(crossBar));
+        
+        for ( Body2D b: kite ) {
+            b.applyForce(force);
+        }
+    }
+    
     @Override
     public void paint(Graphics g) {
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
         int height = getHeight();
         g.clearRect(0, 0, getWidth(), height);
         g.translate(0, -10);
