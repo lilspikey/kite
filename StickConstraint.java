@@ -4,6 +4,10 @@ public class StickConstraint<B extends Body<V>, V extends Vector<V>> implements 
     private final B b2;
     private final double length;
     
+    public StickConstraint(B b1, B b2) {
+        this(b1, b2, b1.getPos().subtract(b2.getPos()).length());
+    }
+    
     public StickConstraint(B b1, B b2, double length) {
         this.b1 = b1;
         this.b2 = b2;
