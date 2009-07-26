@@ -9,7 +9,12 @@ public class KiteCanvas extends JPanel {
         space.setGravity( new Vector2D(0, -10) );
         space.addGlobalConstraint(new FloorConstraint());
         
-        space.add( new Body2D(50, 50) );
+        Body2D b1 = new Body2D(50, 50);
+        Body2D b2 = new Body2D(50 + 36, 50 + 77);
+        
+        space.add(b1);
+        space.add(b2);
+        space.add(new StickConstraint<Body2D, Vector2D>(b1, b2, 85));
     }
     
     public void tick() {

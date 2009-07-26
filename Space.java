@@ -35,8 +35,12 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         return bodies;
     }
     
-    public void addGlobalConstraint(GlobalConstraint<B,V> constraint) {
+    public void add(Constraint constraint) {
         constraints.add(constraint);
+    }
+    
+    public void addGlobalConstraint(GlobalConstraint<B,V> constraint) {
+        add(constraint);
         globalConstraints.add(constraint);
     }
     
