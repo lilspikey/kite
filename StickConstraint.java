@@ -14,7 +14,7 @@ public class StickConstraint<B extends Body<V>, V extends Vector<V>> implements 
         this.length = length;
     }
     
-    public void constrain() {
+    public double constrain() {
         V p1 = b1.getPos(),
           p2 = b2.getPos();
         double invM1 = b1.getMassInv(),
@@ -23,13 +23,17 @@ public class StickConstraint<B extends Body<V>, V extends Vector<V>> implements 
         V delta = p2.subtract(p1);
         double deltaLength = delta.length();
         
-        double diff = (deltaLength-length)/(deltaLength*(invM1+invM2));
+        double error = (deltaLength-length);
+        
+        double diff = error/(deltaLength*(invM1+invM2));
 
         p1 = p1.add( delta.multiply( invM1*diff ) );
         p2 = p2.subtract( delta.multiply( invM2*diff ) );
         
         b1.setPos(p1);
         b2.setPos(p2);
+        
+        return error;
     }
     
 }

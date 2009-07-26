@@ -44,10 +44,12 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         globalConstraints.add(constraint);
     }
     
-    public void applyConstraints() {
+    public double applyConstraints() {
+        double error = 0;
         for ( Constraint c: constraints ) {
-            c.constrain();
+            error = Math.max(error, c.constrain());
         }
+        return error;
     }
     
     public void add(Shape<B,V> shape) {
@@ -71,9 +73,15 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
     
     public void update(double dt) {
         integrate(dt);
-        for ( int i = 0; i < 10; i++ ) {
-            applyConstraints();
+        double error = 0;
+        int count = 0;
+        do {
+            error = applyConstraints();
+            System.out.println("error: "+error);
+            count++;
         }
+        while( count < 5 || (error > 0.5 && count < 200) );
+        System.out.println("count: " +count);
     }
     
 }

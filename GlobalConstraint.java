@@ -12,12 +12,14 @@ public abstract class GlobalConstraint<B extends Body<V>, V extends Vector<V>> i
         bodies.remove(body);
     }
     
-    public void constrain() {
+    public double constrain() {
+        double error = 0;
         for ( B b: bodies ) {
-            constrain(b);
+            error = Math.max(error, constrain(b));
         }
+        return error;
     }
     
-    public abstract void constrain(B b);
+    public abstract double constrain(B b);
     
 }
