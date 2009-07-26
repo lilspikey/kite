@@ -38,4 +38,12 @@ public abstract class Body<V extends Vector<V>> {
         this.pos = pos;
     }
     
+    public double getMass() {
+        return mass;
+    }
+    
+    public void setMass(double mass) {
+        this.mass = mass;
+    }
+    
 }

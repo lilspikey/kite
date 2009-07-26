@@ -15,6 +15,7 @@ public class KiteCanvas extends JPanel {
         space.addGlobalConstraint(new FloorConstraint());
         
         Body2D prev = new Body2D(10, 10);
+        prev.setMass(0.01);
         space.add(prev);
         kiteString.add(prev);
         
@@ -23,6 +24,7 @@ public class KiteCanvas extends JPanel {
             space.add(bi);
             space.add(new StickConstraint<Body2D, Vector2D>(bi, prev));
             prev = bi;
+            prev.setMass(0.01);
             kiteString.add(prev);
         }
         

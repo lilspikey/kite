@@ -53,7 +53,7 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
     public void integrate(double dt) {
         for ( B b: bodies ) {
             if ( gravity != null ) {
-                b.applyForce(gravity);
+                b.applyForce(gravity.multiply(b.getMass()));
             }
             b.integrate(dt);
         }
