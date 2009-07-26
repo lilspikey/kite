@@ -11,7 +11,8 @@ public class KiteCanvas extends JPanel {
     
     private ArrayList<Rope2D> kiteRopes = new ArrayList<Rope2D>();
     
-    private double dt = 0.04/10;
+    private int updateCount = 5;
+    private double dt = 0.04/updateCount;
     
     public KiteCanvas() {
         space.setGravity( new Vector2D(0, -10) );
@@ -72,7 +73,7 @@ public class KiteCanvas extends JPanel {
         
         // give it initial velocity upwards
         for ( Body2D b: kite ) {
-            b.setVelocity(new Vector2D(0, 5).multiply(dt));
+            b.setVelocity(new Vector2D(0, 200).multiply(dt));
         }
         
         // now add rigging
@@ -106,7 +107,7 @@ public class KiteCanvas extends JPanel {
     }
     
     public void tick() {
-        for ( int i = 0; i < 10; i++ ) {
+        for ( int i = 0; i < updateCount; i++ ) {
             applyWindForce();
             space.update(dt);
         }
