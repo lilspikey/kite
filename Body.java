@@ -34,4 +34,8 @@ public abstract class Body<V extends Vector<V>> {
         return pos;
     }
     
+    public void setPos(V pos) {
+        this.pos = pos;
+    }
+    
 }
