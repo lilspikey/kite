@@ -1,7 +1,7 @@
 
-public class Vector2D {
-    private double x;
-    private double y;
+public class Vector2D implements Vector<Vector2D> {
+    public final double x;
+    public final double y;
     
     public Vector2D(double x, double y) {
         this.x = x;
@@ -20,18 +20,24 @@ public class Vector2D {
         return Math.sqrt(x*x + y*y);
     }
     
-    public void add(Vector2D v) {
-        x += v.x;
-        y += v.y;
+    public Vector2D add(Vector2D v) {
+        return new Vector2D(x + v.x, y + v.y);
     }
     
-    public void multiply(double s) {
-        x *= s;
-        y *= s;
+    public Vector2D subtract(Vector2D v) {
+        return new Vector2D(x - v.x, y - v.y);
     }
     
-    public void divide(double s) {
-        x /= s;
-        y /= s;
+    public Vector2D multiply(double s) {
+        return new Vector2D(x * s, y * s);
     }
+    
+    public Vector2D divide(double s) {
+        return new Vector2D(x / s, y / s);
+    }
+    
+    public Vector2D zero() {
+        return new Vector2D(0, 0);
+    }
+    
 }
