@@ -10,14 +10,18 @@ public class KiteCanvas extends JPanel {
     private ArrayList<Body2D> kiteString = new ArrayList<Body2D>();
     private ArrayList<Body2D> kite = new ArrayList<Body2D>();
     
+    private double dt = 0.04/10;
+    
     public KiteCanvas() {
         space.setGravity( new Vector2D(0, -10) );
         space.addGlobalConstraint(new FloorConstraint());
         
         Body2D prev = new Body2D(1, 10);
-        prev.setMass(1000);
+        prev.setImmovable();
         space.add(prev);
         kiteString.add(prev);
+        
+        Body2D joint = null;
         
         for ( int i = 0; i < 150; i++ ) {
             Body2D bi = new Body2D(prev.getPos().x + 2, prev.getPos().y + 0.5);
@@ -26,14 +30,23 @@ public class KiteCanvas extends JPanel {
             prev = bi;
             prev.setMass(1);
             kiteString.add(prev);
+            
+            if ( i == 140 ) {
+                joint = bi;
+            }
         }
         
         Body2D center = prev;
         
-        Body2D c1 = new Body2D(prev.getPos().x, prev.getPos().y + 20);
-        Body2D c2 = new Body2D(prev.getPos().x + 30, prev.getPos().y);
-        Body2D c3 = new Body2D(prev.getPos().x, prev.getPos().y - 40);
-        Body2D c4 = new Body2D(prev.getPos().x - 30, prev.getPos().y);
+        Body2D c1 = new Body2D(center.getPos().x, center.getPos().y + 20);
+        Body2D c2 = new Body2D(center.getPos().x + 30, center.getPos().y);
+        Body2D c3 = new Body2D(center.getPos().x, center.getPos().y - 40);
+        Body2D c4 = new Body2D(center.getPos().x - 30, center.getPos().y);
+        
+        c1.setMass(20);
+        c2.setMass(20);
+        c3.setMass(40);
+        c4.setMass(20);
         
         kite.add(c1);
         kite.add(c2);
@@ -60,24 +73,32 @@ public class KiteCanvas extends JPanel {
         space.add(new StickConstraint<Body2D, Vector2D>(c1, c3));
         space.add(new StickConstraint<Body2D, Vector2D>(c2, c4));
         
+        // extra rigging
+        space.add(new StickConstraint<Body2D, Vector2D>(joint, c3));
+        
         // give it initial velocity upwards
         for ( Body2D b: kite ) {
-            b.setVelocity(new Vector2D(0, 10));
-            b.setMass(10);
+            b.setVelocity(new Vector2D(0, 50).multiply(dt));
         }
     }
     
     public void tick() {
-        //applyWindForce();
-        space.update(0.04);
+        for ( int i = 0; i < 10; i++ ) {
+            applyWindForce();
+            space.update(dt);
+        }
         repaint();
     }
     
     public void applyWindForce() {
-        Vector2D wind = new Vector2D(10, 1);
-        
+        Vector2D wind = new Vector2D(7000, 0);
         Vector2D crossBar = kite.get(1).getPos().subtract( kite.get(3).getPos() ).unit();
-        Vector2D force = wind.multiply(crossBar);
+        
+        System.out.println(crossBar.dotProduct(wind));
+        
+        Vector2D force = crossBar.multiply(crossBar.dotProduct(wind));
+        
+        System.out.println(crossBar + " - " + force);
         
         //crossBar = kite.get(0).getPos().subtract( kite.get(2).getPos() ).unit();
         //force = force.add(wind.multiply(crossBar));

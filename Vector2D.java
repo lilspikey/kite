@@ -48,8 +48,13 @@ public class Vector2D implements Vector<Vector2D> {
         return divide(length());
     }
     
-    public Vector2D orth() {
-        return new Vector2D(-y, x);
+    public double dotProduct(Vector2D v) {
+        return (x * v.x) + (y * v.y);
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("%f, %f", x, y);
     }
     
 }

@@ -4,7 +4,7 @@ public abstract class Body<V extends Vector<V>> {
     private V posPrev = null;
     
     private V forces = null;
-    private double mass = 1.0;
+    private double massInv = 1.0;
     
     public Body(V pos, V posPrev) {
         this.pos = pos;
@@ -17,7 +17,7 @@ public abstract class Body<V extends Vector<V>> {
      * integrate using verlet method
      **/
     public void integrate(double dt) {
-        V a = forces.divide(mass);
+        V a = forces.multiply(massInv);
         V next = pos.multiply(2).subtract(posPrev).add( a.multiply(dt*dt) );
         
         // update positions and zero forces
@@ -50,12 +50,20 @@ public abstract class Body<V extends Vector<V>> {
         posPrev = pos.subtract(v);
     }
     
-    public double getMass() {
-        return mass;
+    public double getMassInv() {
+        return massInv;
     }
     
     public void setMass(double mass) {
-        this.mass = mass;
+        this.massInv = 1.0/mass;
+    }
+    
+    public void setImmovable() {
+        massInv = 0;
+    }
+    
+    public boolean isImmovable() {
+        return massInv == 0;
     }
     
 }
