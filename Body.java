@@ -1,6 +1,6 @@
 
 public abstract class Body<V extends Vector<V>> {
-    private static final double DAMPING = 0.0025;
+    private static final double DAMPING = 0.005;
     private V pos = null;
     private V posPrev = null;
     
