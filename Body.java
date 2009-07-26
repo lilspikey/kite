@@ -1,5 +1,6 @@
 
 public abstract class Body<V extends Vector<V>> {
+    private static final double DRAG = 0.005;
     private V pos = null;
     private V posPrev = null;
     
@@ -18,7 +19,7 @@ public abstract class Body<V extends Vector<V>> {
      **/
     public void integrate(double dt) {
         V a = forces.multiply(massInv);
-        V next = pos.multiply(2).subtract(posPrev).add( a.multiply(dt*dt) );
+        V next = pos.multiply(2-DRAG).subtract(posPrev.multiply(1-DRAG)).add( a.multiply(dt*dt) );
         
         // update positions and zero forces
         posPrev = pos;

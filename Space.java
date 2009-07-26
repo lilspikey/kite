@@ -50,6 +50,16 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         }
     }
     
+    public void add(Shape<B,V> shape) {
+        for ( B body: shape.getBodies() ) {
+            add(body);
+        }
+        
+        for ( Constraint contraint: shape.getConstraints() ) {
+            add(contraint);
+        }
+    }
+    
     public void integrate(double dt) {
         for ( B b: bodies ) {
             if ( gravity != null && !b.isImmovable() ) {
