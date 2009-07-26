@@ -2,26 +2,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.util.ArrayList;
+
 public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
+    
+    private ArrayList<Body2D> kiteString = new ArrayList<Body2D>();
     
     public KiteCanvas() {
         space.setGravity( new Vector2D(0, -10) );
         space.addGlobalConstraint(new FloorConstraint());
         
-        Body2D b1 = new Body2D(50, 50);
-        Body2D b2 = new Body2D(50 + 36, 50 + 77);
-        Body2D b3 = new Body2D(b2.getPos().x, b2.getPos().y+50);
-        Body2D b4 = new Body2D(b2.getPos().x+50, b2.getPos().y);
+        Body2D prev = new Body2D(10, 10);
+        space.add(prev);
+        kiteString.add(prev);
         
-        space.add(b1);
-        space.add(b2);
-        space.add(b3);
-        space.add(b4);
-        space.add(new StickConstraint<Body2D, Vector2D>(b1, b2));
-        space.add(new StickConstraint<Body2D, Vector2D>(b2, b3));
-        space.add(new StickConstraint<Body2D, Vector2D>(b2, b4));
-        space.add(new StickConstraint<Body2D, Vector2D>(b3, b4));
+        for ( int i = 0; i < 100; i++ ) {
+            Body2D bi = new Body2D(prev.getPos().x + 3, prev.getPos().y + 3);
+            space.add(bi);
+            space.add(new StickConstraint<Body2D, Vector2D>(bi, prev));
+            prev = bi;
+            kiteString.add(prev);
+        }
     }
     
     public void tick() {
@@ -31,10 +33,17 @@ public class KiteCanvas extends JPanel {
     
     @Override
     public void paint(Graphics g) {
-        g.clearRect(0, 0, getWidth(), getHeight());
-        for ( Body2D b: space.getBodies() ) {
+        int height = getHeight();
+        g.clearRect(0, 0, getWidth(), height);
+        g.translate(0, -10);
+        
+        Vector2D prevPos = null;
+        for ( Body2D b: kiteString ) {
             Vector2D pos = b.getPos();
-            g.drawOval((int)(pos.x-2), (int)(pos.y-2), 4, 4);
+            if ( prevPos != null ) {
+                g.drawLine((int)(pos.x), (int)(height - pos.y), (int)(prevPos.x), (int)(height - prevPos.y));
+            }
+            prevPos = pos;
         }
     }
     
