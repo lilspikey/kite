@@ -11,14 +11,16 @@ public class KiteCanvas extends JPanel {
     
     private ArrayList<Rope2D> kiteRopes = new ArrayList<Rope2D>();
     
-    private int updateCount = 5;
+    private Body2D base = null;
+    
+    private int updateCount = 10;
     private double dt = 0.04/updateCount;
     
     public KiteCanvas() {
         space.setGravity( new Vector2D(0, -10) );
         space.addGlobalConstraint(new FloorConstraint());
         
-        Body2D base = new Body2D(1, 10);
+        base = new Body2D(1, 10);
         base.setImmovable();
         space.add(base);
         
@@ -104,6 +106,32 @@ public class KiteCanvas extends JPanel {
         space.add(tail);
         space.add(new StickConstraint<Body2D, Vector2D>(c3, tail.getStart()));
         kiteRopes.add(tail);*/
+        
+        addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                requestFocus();
+            }
+        });
+        
+        addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent ke) {
+                System.out.println("here");
+                double dx = 0;
+                switch(ke.getKeyCode()) {
+                    case KeyEvent.VK_LEFT:
+                        dx = -100;
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        dx = 100;
+                        break;
+                }
+                //base.setPos(new Vector2D(base.getPos().x+dx, base.getPos().y));
+                base.setVelocity(new Vector2D(dt*dx, 0));
+            }
+            public void keyReleased(KeyEvent ke) {
+                base.setVelocity(new Vector2D(0, 0));
+            }
+        });
     }
     
     public void tick() {

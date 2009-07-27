@@ -80,7 +80,7 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
             System.out.println("error: "+error);
             count++;
         }
-        while( count < 5 || (error > 0.5 && count < 200) );
+        while( count < 5 || (error > 0.25 && count < 200) );
         System.out.println("count: " +count);
     }
     
