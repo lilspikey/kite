@@ -48,7 +48,10 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
     public double applyConstraints() {
         double error = 0;
         for ( Constraint c: constraints ) {
-            error = Math.max(error, c.constrain());
+            double cerror = c.constrain();
+            if ( cerror > error ) {
+                error = cerror;
+            }
         }
         return error;
     }

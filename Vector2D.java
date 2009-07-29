@@ -32,6 +32,10 @@ public class Vector2D implements Vector<Vector2D> {
         return new Vector2D(x * s, y * s);
     }
     
+    public Vector2D multiply_add(double s, Vector2D v) {
+        return new Vector2D((x * s) + v.x, (y * s) + v.y);
+    }
+    
     public Vector2D multiply(Vector2D v) {
         return new Vector2D(x * v.x, y * v.y);
     }

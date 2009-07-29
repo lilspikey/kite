@@ -27,8 +27,8 @@ public class StickConstraint<B extends Body<V>, V extends Vector<V>> implements 
         
         double diff = error/(deltaLength*(invM1+invM2));
 
-        p1 = p1.add( delta.multiply( invM1*diff ) );
-        p2 = p2.subtract( delta.multiply( invM2*diff ) );
+        p1 = delta.multiply_add(  invM1*diff, p1);
+        p2 = delta.multiply_add( -invM2*diff, p2);
         
         b1.setPos(p1);
         b2.setPos(p2);

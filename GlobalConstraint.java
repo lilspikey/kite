@@ -15,7 +15,10 @@ public abstract class GlobalConstraint<B extends Body<V>, V extends Vector<V>> i
     public double constrain() {
         double error = 0;
         for ( B b: bodies ) {
-            error = Math.max(error, constrain(b));
+            double cerror = constrain(b);
+            if ( cerror > error ) {
+                error = cerror;
+            }
         }
         return error;
     }

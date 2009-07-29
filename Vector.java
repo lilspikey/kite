@@ -9,6 +9,8 @@ public interface Vector<V extends Vector> {
     
     public V multiply(double s);
     
+    public V multiply_add(double s, V v);
+    
     public V divide(double s);
     
     public V zero();

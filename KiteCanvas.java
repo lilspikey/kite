@@ -146,14 +146,7 @@ public class KiteCanvas extends JPanel {
         Vector2D wind = new Vector2D(10000, 0);
         Vector2D crossBar = kite.get(1).getPos().subtract( kite.get(3).getPos() ).unit();
         
-        System.out.println(crossBar.dotProduct(wind));
-        
         Vector2D force = crossBar.multiply(crossBar.dotProduct(wind));
-        
-        System.out.println(crossBar + " - " + force);
-        
-        //crossBar = kite.get(0).getPos().subtract( kite.get(2).getPos() ).unit();
-        //force = force.add(wind.multiply(crossBar));
         
         for ( Body2D b: kite ) {
             b.applyForce(force);
