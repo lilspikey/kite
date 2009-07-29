@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 
 public abstract class Space<B extends Body<V>, V extends Vector<V>> {
+    private static final double DAMPING = 0.01;
     private List<B> bodies = new ArrayList<B>();
     private List<Constraint> constraints = new ArrayList<Constraint>();
     private List<GlobalConstraint<B,V>> globalConstraints = new ArrayList<GlobalConstraint<B,V>>();
@@ -67,8 +68,25 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
             if ( gravity != null && !b.isImmovable() ) {
                 b.applyForce(gravity.divide(b.getMassInv()));
             }
-            b.integrate(dt);
+            integrate(b, dt);
         }
+    }
+    
+    /**
+     * integrate using verlet method
+     **/
+    public void integrate(B body, double dt) {
+        V forces = body.getForces();
+        double massInv = body.getMassInv();
+        
+        V pos = body.getPos();
+        V posPrev = body.getPosPrev();
+        
+        V a = forces.multiply(massInv);
+        V next = pos.multiply(2-DAMPING).subtract(posPrev.multiply(1-DAMPING)).add( a.multiply(dt*dt) );
+        
+        body.updatePosition(next);
+        body.zeroForces();
     }
     
     public void update(double dt) {
@@ -77,11 +95,9 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         int count = 0;
         do {
             error = applyConstraints();
-            System.out.println("error: "+error);
             count++;
         }
         while( count < 5 || (error > 0.25 && count < 200) );
-        System.out.println("count: " +count);
     }
     
 }

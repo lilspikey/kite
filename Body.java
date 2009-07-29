@@ -1,6 +1,5 @@
 
 public abstract class Body<V extends Vector<V>> {
-    private static final double DAMPING = 0.01;
     private V pos = null;
     private V posPrev = null;
     
@@ -14,21 +13,16 @@ public abstract class Body<V extends Vector<V>> {
         forces = pos.zero();
     }
     
-    /**
-     * integrate using verlet method
-     **/
-    public void integrate(double dt) {
-        V a = forces.multiply(massInv);
-        V next = pos.multiply(2-DAMPING).subtract(posPrev.multiply(1-DAMPING)).add( a.multiply(dt*dt) );
-        
-        // update positions and zero forces
-        posPrev = pos;
-        pos = next;
+    public void applyForce(V f) {
+        forces = forces.add(f);
+    }
+    
+    public void zeroForces() {
         forces = forces.zero();
     }
     
-    public void applyForce(V f) {
-        forces = forces.add(f);
+    public V getForces() {
+        return forces;
     }
     
     public V getPos() {
@@ -45,6 +39,11 @@ public abstract class Body<V extends Vector<V>> {
     
     public void setPosPrev(V pos) {
         this.posPrev = pos;
+    }
+    
+    public void updatePosition(V pos) {
+        this.posPrev = this.pos;
+        this.pos = pos;
     }
     
     public void setVelocity(V v) {
