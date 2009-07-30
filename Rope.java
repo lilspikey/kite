@@ -33,6 +33,21 @@ public abstract class Rope<B extends Body<V>, V extends Vector<V>> implements Sh
         return bodies;
     }
     
+    public double calcLength() {
+        double length = 0;
+        for ( StickConstraint<B,V> constraint: constraints ) {
+            length += constraint.getLength();
+        }
+        return length;
+    }
+    
+    public void changeLength(double length) {
+        double constraintLength = length/constraints.size();
+        for ( StickConstraint<B,V> constraint: constraints ) {
+            constraint.setLength(constraintLength);
+        }
+    }
+    
     public List<Constraint> getConstraints() {
         return new ArrayList<Constraint>(constraints);
     }

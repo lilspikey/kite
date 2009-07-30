@@ -9,6 +9,7 @@ public class KiteCanvas extends JPanel {
     
     private ArrayList<Body2D> kite = new ArrayList<Body2D>();
     
+    private Rope2D mainRope = null;
     private ArrayList<Rope2D> kiteRopes = new ArrayList<Rope2D>();
     
     private Body2D base = null;
@@ -17,7 +18,8 @@ public class KiteCanvas extends JPanel {
     private double dt = 0.04/updateCount;
     private double rope_weight = 1;
     private double kiteMass = 1;
-    private double windStrength = 5000;
+    private double windStrength = 2000;
+    private Vector2D force = new Vector2D();
     
     public KiteCanvas() {
         space.setGravity( new Vector2D(0, -10) );
@@ -27,7 +29,7 @@ public class KiteCanvas extends JPanel {
         base.setImmovable();
         space.add(base);
         
-        Rope2D mainRope = new Rope2D(new Vector2D(base.getPos().x+1, base.getPos().y), new Vector2D(300, 70), 50, rope_weight);
+        mainRope = new Rope2D(new Vector2D(base.getPos().x+1, base.getPos().y), new Vector2D(300, 70), 50, rope_weight);
         space.add(mainRope);
         kiteRopes.add(mainRope);
         
@@ -126,6 +128,12 @@ public class KiteCanvas extends JPanel {
                     case KeyEvent.VK_RIGHT:
                         dx = 100;
                         break;
+                    case KeyEvent.VK_UP:
+                        changeRopeLength(2);
+                        return;
+                    case KeyEvent.VK_DOWN:
+                        changeRopeLength(-2);
+                        return;
                 }
                 //base.setPos(new Vector2D(base.getPos().x+dx, base.getPos().y));
                 base.setVelocity(new Vector2D(dt*dx, 0));
@@ -134,6 +142,11 @@ public class KiteCanvas extends JPanel {
                 base.setVelocity(new Vector2D(0, 0));
             }
         });
+    }
+    
+    public void changeRopeLength(double dx) {
+        double length = mainRope.calcLength();
+        mainRope.changeLength(length + dx);
     }
     
     public void tick() {
@@ -164,6 +177,8 @@ public class KiteCanvas extends JPanel {
         for ( Body2D b: kite ) {
             b.applyForce(force);
         }
+        
+        this.force = force;
     }
     
     @Override
@@ -187,6 +202,10 @@ public class KiteCanvas extends JPanel {
         for ( Rope2D kiteRope: kiteRopes ) {
             drawRope(g, kiteRope);
         }
+        
+        Vector2D p1 = kite.get(0).getPos();
+        Vector2D p2 = p1.add(force.multiply(dt));
+        g.drawLine((int)p1.x, (int)(height - p1.y), (int)p2.x, (int)(height - p2.y));
     }
     
     private void drawRope(Graphics g, Rope2D rope) {
