@@ -14,4 +14,6 @@ public interface Vector<V extends Vector> {
     public V divide(double s);
     
     public V zero();
+    
+    public double dotProduct(V v);
 }

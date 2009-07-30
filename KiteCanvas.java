@@ -15,6 +15,9 @@ public class KiteCanvas extends JPanel {
     
     private int updateCount = 10;
     private double dt = 0.04/updateCount;
+    private double rope_weight = 1;
+    private double kiteMass = 1;
+    private double windStrength = 5000;
     
     public KiteCanvas() {
         space.setGravity( new Vector2D(0, -10) );
@@ -24,7 +27,7 @@ public class KiteCanvas extends JPanel {
         base.setImmovable();
         space.add(base);
         
-        Rope2D mainRope = new Rope2D(new Vector2D(base.getPos().x+1, base.getPos().y), new Vector2D(300, 70), 150, 1.0);
+        Rope2D mainRope = new Rope2D(new Vector2D(base.getPos().x+1, base.getPos().y), new Vector2D(300, 70), 50, rope_weight);
         space.add(mainRope);
         kiteRopes.add(mainRope);
         
@@ -41,10 +44,10 @@ public class KiteCanvas extends JPanel {
         Body2D middle = new Body2D(center.x, center.y+10);
         Body2D lower = new Body2D(center.x, center.y-30);
         
-        c1.setMass(40);
-        c2.setMass(40);
-        c3.setMass(100);
-        c4.setMass(40);
+        c1.setMass(kiteMass);
+        c2.setMass(kiteMass);
+        c3.setMass(kiteMass);
+        c4.setMass(kiteMass);
         
         kite.add(c1);
         kite.add(c2);
@@ -81,10 +84,10 @@ public class KiteCanvas extends JPanel {
         // now add rigging
         Rope2D topRope = new Rope2D(joint.getPos().add(new Vector2D(0.01,0.01)),
                                     middle.getPos().add(new Vector2D(-0.01,-0.01)),
-                                    10, 1.0);
+                                    10, rope_weight);
         Rope2D bottomRope = new Rope2D(joint.getPos().add(new Vector2D(0.01,0.01)),
                                     lower.getPos().add(new Vector2D(-0.01,-0.01)),
-                                    10, 1.0);
+                                    10, rope_weight);
         
         space.add(topRope);
         kiteRopes.add(topRope);
@@ -115,7 +118,6 @@ public class KiteCanvas extends JPanel {
         
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent ke) {
-                System.out.println("here");
                 double dx = 0;
                 switch(ke.getKeyCode()) {
                     case KeyEvent.VK_LEFT:
@@ -143,7 +145,7 @@ public class KiteCanvas extends JPanel {
     }
     
     public void applyWindForce() {
-        Vector2D wind = new Vector2D(10000, 0);
+        Vector2D wind = new Vector2D(windStrength, 0);
         Vector2D crossBar = kite.get(1).getPos().subtract( kite.get(3).getPos() ).unit();
         
         Vector2D force = crossBar.multiply(crossBar.dotProduct(wind));
