@@ -138,25 +138,17 @@ public class KiteCanvas extends JPanel {
     
     public void tick() {
         for ( int i = 0; i < updateCount; i++ ) {
-            applyWindForce();
+            applyForces();
             space.update(dt);
         }
         repaint();
     }
     
-    public void applyWindForce() {
-        Vector2D wind = calcWindSpeed();
+    public void applyForces() {
+        Vector2D wind = new Vector2D(windStrength, 0);
         Vector2D crossBar = kite.get(1).getPos().subtract( kite.get(3).getPos() ).unit();
         
         Vector2D force = crossBar.multiply(crossBar.dotProduct(wind));
-        
-        for ( Body2D b: kite ) {
-            b.applyForce(force);
-        }
-    }
-    
-    private Vector2D calcWindSpeed() {
-        Vector2D wind = new Vector2D(windStrength, 0);
         
         // factor in a bit of drag (speed versus the wind)
         Vector2D speed = new Vector2D();
@@ -167,7 +159,11 @@ public class KiteCanvas extends JPanel {
         
         speed = speed.divide(kite.size());
         
-        return wind.subtract(speed);
+        force = force.subtract(speed);
+        
+        for ( Body2D b: kite ) {
+            b.applyForce(force);
+        }
     }
     
     @Override
