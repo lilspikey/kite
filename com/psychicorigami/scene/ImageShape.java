@@ -18,7 +18,12 @@ public class ImageShape extends AbstractShape {
     public void paintShape(Graphics2D g) {
         double width  = image.getWidth();
         double height = image.getHeight();
-        g.drawRenderedImage(image, AffineTransform.getTranslateInstance(-(width/2.0), -(height/2.0)));
+        
+        AffineTransform tx = new AffineTransform();
+        tx.scale(1,-1);
+        tx.translate(-(width/2.0), -(height/2.0));
+        
+        g.drawRenderedImage(image, tx);
     }
     
 }

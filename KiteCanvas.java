@@ -1,15 +1,21 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
+import javax.imageio.*;
+import java.awt.geom.*;
 
 import java.util.ArrayList;
+import java.io.*;
 
 import com.psychicorigami.physics.*;
+import com.psychicorigami.scene.ImageShape;
 
 public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
     
     private ArrayList<Body2D> kite = new ArrayList<Body2D>();
+    private ImageShape kiteShape = null;
     
     private Rope2D mainRope = null;
     private ArrayList<Rope2D> kiteRopes = new ArrayList<Rope2D>();
@@ -23,7 +29,7 @@ public class KiteCanvas extends JPanel {
     private double windStrength = 2000;
     private Vector2D force = new Vector2D();
     
-    public KiteCanvas() {
+    public KiteCanvas() throws IOException {
         space.setGravity( new Vector2D(0, -10) );
         space.addGlobalConstraint(new FloorConstraint());
         
@@ -113,6 +119,9 @@ public class KiteCanvas extends JPanel {
         space.add(tail);
         space.add(new StickConstraint<Body2D, Vector2D>(c3, tail.getStart()));
         kiteRopes.add(tail);*/
+        BufferedImage img = ImageIO.read(getClass().getResource("/images/kite.gif"));
+        
+        kiteShape = new ImageShape(img, c1, c3);
         
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent me) {
@@ -190,7 +199,10 @@ public class KiteCanvas extends JPanel {
         
         int height = getHeight();
         g.clearRect(0, 0, getWidth(), height);
-        g.translate(0, -10);
+        
+        AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
+        tx.translate(0, -getHeight());
+        g2d.transform(tx);
         
         g.setColor(Color.RED);
         drawPolygon(g, kite, true);
@@ -207,7 +219,9 @@ public class KiteCanvas extends JPanel {
         
         Vector2D p1 = kite.get(0).getPos();
         Vector2D p2 = p1.add(force.multiply(dt));
-        g.drawLine((int)p1.x, (int)(height - p1.y), (int)p2.x, (int)(height - p2.y));
+        g.drawLine((int)p1.x, (int)(p1.y), (int)p2.x, (int)(p2.y));
+        
+        kiteShape.paint(g2d);
     }
     
     private void drawRope(Graphics g, Rope2D rope) {
@@ -230,7 +244,7 @@ public class KiteCanvas extends JPanel {
     
     private void drawLine(Graphics g, Vector2D p1, Vector2D p2) {
         int height = getHeight();
-        g.drawLine((int)(p1.x), (int)(height - p1.y), (int)(p2.x), (int)(height - p2.y));
+        g.drawLine((int)(p1.x), (int)(p1.y), (int)(p2.x), (int)(p2.y));
     }
     
     @Override
@@ -238,7 +252,7 @@ public class KiteCanvas extends JPanel {
         return new Dimension(480, 480);
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         final KiteCanvas canvas = new KiteCanvas();
         JFrame frame = new JFrame("Kite");
         frame.add(canvas);

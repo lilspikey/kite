@@ -19,11 +19,15 @@ public abstract class AbstractShape implements Shape {
         Vector2D p1 = b1.getPos();
         Vector2D p2 = b2.getPos();
         
-        Vector2D angle = p1.subtract(p1).unit();
-        Vector2D position = p1.add(p2).multiple(0.5);
+        Vector2D angle = p1.subtract(p2).unit();
+        Vector2D position = p1.add(p2).multiply(0.5);
         
         AffineTransform original = g.getTransform();
         AffineTransform tx = new AffineTransform();
+
+        tx.translate(position.x, position.y);
+        tx.rotate(Math.atan2(angle.y, angle.x) - Math.PI/2);
+        
         g.transform(tx);
         
         paintShape(g);
