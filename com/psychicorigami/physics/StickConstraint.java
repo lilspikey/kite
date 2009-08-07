@@ -1,3 +1,4 @@
+package com.psychicorigami.physics;
 
 public class StickConstraint<B extends Body<V>, V extends Vector<V>> implements Constraint {
     private final B b1;

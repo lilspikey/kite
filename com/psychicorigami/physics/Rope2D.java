@@ -1,3 +1,4 @@
+package com.psychicorigami.physics;
 
 public class Rope2D extends Rope<Body2D, Vector2D> {
     

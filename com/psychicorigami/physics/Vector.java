@@ -1,3 +1,4 @@
+package com.psychicorigami.physics;
 
 public interface Vector<V extends Vector> {
     

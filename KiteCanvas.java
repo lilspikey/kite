@@ -4,6 +4,8 @@ import java.awt.event.*;
 
 import java.util.ArrayList;
 
+import com.psychicorigami.physics.*;
+
 public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
     

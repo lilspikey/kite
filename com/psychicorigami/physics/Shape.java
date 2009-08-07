@@ -1,3 +1,5 @@
+package com.psychicorigami.physics;
+
 import java.util.List;
 
 public interface Shape<B extends Body<V>, V extends Vector<V>> {

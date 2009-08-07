@@ -1,3 +1,4 @@
+package com.psychicorigami.physics;
 
 public abstract class Body<V extends Vector<V>> {
     private V pos = null;

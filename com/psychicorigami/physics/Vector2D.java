@@ -1,3 +1,4 @@
+package com.psychicorigami.physics;
 
 public class Vector2D implements Vector<Vector2D> {
     public final double x;

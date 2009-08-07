@@ -1,3 +1,4 @@
+package com.psychicorigami.physics;
 
 public class Body2D extends Body<Vector2D> {
     
