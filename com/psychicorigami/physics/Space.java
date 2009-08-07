@@ -58,12 +58,12 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         return error;
     }
     
-    public void add(Shape<B,V> shape) {
-        for ( B body: shape.getBodies() ) {
+    public void add(MultiBody<B,V> multiBody) {
+        for ( B body: multiBody.getBodies() ) {
             add(body);
         }
         
-        for ( Constraint contraint: shape.getConstraints() ) {
+        for ( Constraint contraint: multiBody.getConstraints() ) {
             add(contraint);
         }
     }

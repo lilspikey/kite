@@ -3,7 +3,7 @@ package com.psychicorigami.physics;
 import java.util.List;
 import java.util.ArrayList;
 
-public abstract class Rope<B extends Body<V>, V extends Vector<V>> implements Shape<B,V> {
+public abstract class Rope<B extends Body<V>, V extends Vector<V>> implements MultiBody<B,V> {
     private List<B> bodies = new ArrayList<B>();
     private List<StickConstraint<B,V>> constraints = new ArrayList<StickConstraint<B,V>>();
     
