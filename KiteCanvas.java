@@ -25,7 +25,7 @@ public class KiteCanvas extends JPanel {
     private int updateCount = 10;
     private double dt = 0.04/updateCount;
     private double rope_weight = 1;
-    private double kiteMass = 1;
+    private double kiteMass = 10;
     private double windStrength = 2000;
     private Vector2D force = new Vector2D();
     
@@ -37,11 +37,11 @@ public class KiteCanvas extends JPanel {
         base.setImmovable();
         space.add(base);
         
-        mainRope = new Rope2D(new Vector2D(base.getPos().x+1, base.getPos().y), new Vector2D(300, 70), 50, rope_weight);
+        mainRope = new Rope2D(new Vector2D(base.getPos().x+1, base.getPos().y), new Vector2D(300, 70), 20, rope_weight);
         space.add(mainRope);
         kiteRopes.add(mainRope);
         
-        space.add(new StickConstraint<Body2D, Vector2D>(base, mainRope.getStart()));
+        space.add(new RopeConstraint<Body2D, Vector2D>(base, mainRope.getStart()));
         
         Body2D joint = mainRope.getEnd();
         Vector2D center = joint.getPos().add(new Vector2D(50, 0));
@@ -94,10 +94,10 @@ public class KiteCanvas extends JPanel {
         // now add rigging
         Rope2D topRope = new Rope2D(joint.getPos().add(new Vector2D(0.01,0.01)),
                                     middle.getPos().add(new Vector2D(-0.01,-0.01)),
-                                    10, rope_weight);
+                                    2, rope_weight);
         Rope2D bottomRope = new Rope2D(joint.getPos().add(new Vector2D(0.01,0.01)),
                                     lower.getPos().add(new Vector2D(-0.01,-0.01)),
-                                    10, rope_weight);
+                                    2, rope_weight);
         
         space.add(topRope);
         kiteRopes.add(topRope);
@@ -105,11 +105,11 @@ public class KiteCanvas extends JPanel {
         space.add(bottomRope);
         kiteRopes.add(bottomRope);
         
-        space.add(new StickConstraint<Body2D, Vector2D>(joint, topRope.getStart()));
-        space.add(new StickConstraint<Body2D, Vector2D>(middle, topRope.getEnd()));
+        space.add(new RopeConstraint<Body2D, Vector2D>(joint, topRope.getStart()));
+        space.add(new RopeConstraint<Body2D, Vector2D>(middle, topRope.getEnd()));
         
-        space.add(new StickConstraint<Body2D, Vector2D>(joint, bottomRope.getStart()));
-        space.add(new StickConstraint<Body2D, Vector2D>(lower, bottomRope.getEnd()));
+        space.add(new RopeConstraint<Body2D, Vector2D>(joint, bottomRope.getStart()));
+        space.add(new RopeConstraint<Body2D, Vector2D>(lower, bottomRope.getEnd()));
         
         // add a tail
         /*Rope2D tail = new Rope2D(c3.getPos().add(new Vector2D(0.01, 0.01)),
@@ -147,7 +147,7 @@ public class KiteCanvas extends JPanel {
                         return;
                 }
                 //base.setPos(new Vector2D(base.getPos().x+dx, base.getPos().y));
-                base.setVelocity(new Vector2D(dt*dx, 0));
+                base.setVelocity(new Vector2D(dt*dx*2, 0));
             }
             public void keyReleased(KeyEvent ke) {
                 base.setVelocity(new Vector2D(0, 0));
@@ -161,7 +161,7 @@ public class KiteCanvas extends JPanel {
     }
     
     public void tick() {
-        for ( int i = 0; i < updateCount; i++ ) {
+        for ( int i = 0; i < 2*updateCount; i++ ) {
             applyForces();
             space.update(dt);
         }
