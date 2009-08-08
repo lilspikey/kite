@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 
 public abstract class Space<B extends Body<V>, V extends Vector<V>> {
-    private static final double DAMPING = 0.01;
+    private static final double DAMPING = 0.005;
     private List<B> bodies = new ArrayList<B>();
     private List<Constraint> constraints = new ArrayList<Constraint>();
     private List<GlobalConstraint<B,V>> globalConstraints = new ArrayList<GlobalConstraint<B,V>>();
