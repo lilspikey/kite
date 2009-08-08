@@ -119,7 +119,7 @@ public class KiteCanvas extends JPanel {
         space.add(tail);
         space.add(new StickConstraint<Body2D, Vector2D>(c3, tail.getStart()));
         kiteRopes.add(tail);*/
-        BufferedImage img = ImageIO.read(getClass().getResource("/images/kite.gif"));
+        BufferedImage img = ImageIO.read(getClass().getResource("/images/kite.png"));
         
         kiteShape = new ImageShape(img, c1, c3);
         
@@ -211,6 +211,8 @@ public class KiteCanvas extends JPanel {
         drawLine(g, kite.get(0).getPos(), kite.get(2).getPos());
         drawLine(g, kite.get(1).getPos(), kite.get(3).getPos());
         
+        kiteShape.paint(g2d);
+        
         g.setColor(Color.GRAY);
         
         for ( Rope2D kiteRope: kiteRopes ) {
@@ -221,7 +223,7 @@ public class KiteCanvas extends JPanel {
         Vector2D p2 = p1.add(force.multiply(dt));
         g.drawLine((int)p1.x, (int)(p1.y), (int)p2.x, (int)(p2.y));
         
-        kiteShape.paint(g2d);
+        
     }
     
     private void drawRope(Graphics g, Rope2D rope) {
