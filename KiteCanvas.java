@@ -235,37 +235,43 @@ public class KiteCanvas extends JPanel {
             drawPolygon(g, bodies, false);
         }
         else {
+            
+            double controlLength = 0.2;
+            
             for ( int i = 1; i < bodies.size(); i++ ) {
                 Vector2D p1 = bodies.get(i-1).getPos();
                 Vector2D p2 = bodies.get(i).getPos();
                 
                 double len = p1.subtract(p2).length();
                 
-                Vector2D c = p1.add(p2).multiply(0.5);
+                Vector2D c = p1.subtract(p2).unit();
                 
-                //g.setColor(Color.BLUE);
+                /*g.setColor(Color.BLACK);
+                g.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
                 
-                Vector2D c1 = c;
+                g.setColor(Color.BLUE);*/
+                
+                Vector2D c1 = p1.subtract(c.multiply(len*controlLength));
                 if ( i > 1 ) {
                     Vector2D p0 = bodies.get(i-2).getPos();
-                    c1 = p1.add(p1.subtract(p0).unit().multiply(len*0.5));
-                    //g.drawLine((int)p1.x, (int)p1.y, (int)c1.x, (int)c1.y);
+                    c1 = p1.add(p1.subtract(p0).unit().multiply(len*controlLength));
                 }
-                Vector2D c2 = c;
+                Vector2D c2 = p2.add(c.multiply(len*controlLength));
                 if ( i < (bodies.size()-1) ) {
                     Vector2D p3 = bodies.get(i+1).getPos();
-                    c2 = p2.add(p2.subtract(p3).unit().multiply(len*0.5));
-                    //g.drawLine((int)p2.x, (int)p2.y, (int)c2.x, (int)c2.y);
+                    c2 = p2.add(p2.subtract(p3).unit().multiply(len*controlLength));
                 }
                 
-                c = c1.add(c2).multiply(0.5);
                 
-                //g.drawOval((int)(c.x-2), (int)(c.y-2), 4, 4);
+                /*g.setColor(Color.GREEN);
+                g.fillOval((int)(c1.x-2), (int)(c1.y-2), 4, 4);
+                g.fillOval((int)(c2.x-2), (int)(c2.y-2), 4, 4);
                 
-                //g.fillRect((int)(p1.x-2), (int)(p1.y-2), 4, 4);
+                g.setColor(Color.RED);
+                g.fillRect((int)(p1.x-2), (int)(p1.y-2), 4, 4);*/
                 
                 //g.setColor(Color.GRAY);
-                QuadCurve2D.Double q = new QuadCurve2D.Double(p1.x, p1.y, c.x, c.y, p2.x, p2.y);
+                CubicCurve2D.Double q = new CubicCurve2D.Double(p1.x, p1.y, c1.x, c1.y, c2.x, c2.y, p2.x, p2.y);
                 g.draw(q);
                 
                 
