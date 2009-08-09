@@ -147,7 +147,7 @@ public class KiteCanvas extends JPanel {
                         return;
                 }
                 //base.setPos(new Vector2D(base.getPos().x+dx, base.getPos().y));
-                base.setVelocity(new Vector2D(dt*dx*2, 0));
+                base.setVelocity(new Vector2D(dt*dx, 0));
             }
             public void keyReleased(KeyEvent ke) {
                 base.setVelocity(new Vector2D(0, 0));
