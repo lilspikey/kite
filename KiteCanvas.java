@@ -121,7 +121,7 @@ public class KiteCanvas extends JPanel {
         kiteRopes.add(tail);*/
         BufferedImage img = ImageIO.read(getClass().getResource("/images/kite.png"));
         
-        kiteShape = new ImageShape(img, c1, c3);
+        kiteShape = new ImageShape(img);
         
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent me) {
@@ -165,6 +165,7 @@ public class KiteCanvas extends JPanel {
             applyForces();
             space.update(dt);
         }
+        updateScene();
         repaint();
     }
     
@@ -190,6 +191,22 @@ public class KiteCanvas extends JPanel {
         }
         
         this.force = force;
+    }
+    
+    public void updateScene() {
+        Body2D top = kite.get(0);
+        Body2D bottom = kite.get(2);
+        
+        Vector2D p1 = top.getPos();
+        Vector2D p2 = bottom.getPos();
+        
+        Vector2D pos = p1.add(p2).multiply(0.5);
+        Vector2D angle = p1.subtract(p2).unit();
+        
+        kiteShape.setAngle(Math.atan2(angle.y, angle.x));
+        kiteShape.setX(pos.x);
+        kiteShape.setY(pos.y);
+        
     }
     
     @Override

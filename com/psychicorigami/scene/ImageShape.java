@@ -1,8 +1,5 @@
 package com.psychicorigami.scene;
 
-import com.psychicorigami.physics.Body2D;
-import com.psychicorigami.physics.Vector2D;
-
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -10,8 +7,16 @@ import java.awt.image.BufferedImage;
 public class ImageShape extends AbstractShape {
     private BufferedImage image;
     
-    public ImageShape(BufferedImage image, Body2D b1, Body2D b2) {
-        super(b1, b2);
+    public ImageShape(BufferedImage image) {
+        this(image, 0, 0);
+    }
+    
+    public ImageShape(BufferedImage image, double x, double y) {
+        this(image, x, y, 0);
+    }
+    
+    public ImageShape(BufferedImage image, double x, double y, double angle) {
+        super(x, y, angle);
         this.image = image;
     }
     
