@@ -10,12 +10,17 @@ import java.io.*;
 
 import com.psychicorigami.physics.*;
 import com.psychicorigami.scene.ImageShape;
+import com.psychicorigami.scene.Scene;
 
 public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
+    private Scene scene = new Scene();
+    
+    private final int SCENE_MIDDLEGROUND = 1;
     
     private ArrayList<Body2D> kite = new ArrayList<Body2D>();
     private ImageShape kiteShape = null;
+    
     
     private Rope2D mainRope = null;
     private ArrayList<Rope2D> kiteRopes = new ArrayList<Rope2D>();
@@ -123,6 +128,8 @@ public class KiteCanvas extends JPanel {
         
         kiteShape = new ImageShape(img);
         
+        scene.add(kiteShape, SCENE_MIDDLEGROUND);
+        
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent me) {
                 requestFocus();
@@ -228,7 +235,7 @@ public class KiteCanvas extends JPanel {
         drawLine(g, kite.get(0).getPos(), kite.get(2).getPos());
         drawLine(g, kite.get(1).getPos(), kite.get(3).getPos());
         
-        kiteShape.paint(g2d);
+        scene.paint(g2d);
         
         g.setColor(Color.GRAY);
         
