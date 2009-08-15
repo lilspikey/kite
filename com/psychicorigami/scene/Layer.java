@@ -47,7 +47,7 @@ public class Layer {
             gb.dispose();
             
             // render shadow
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
             g.drawImage(backing, 5, -5, null);
             
             // draw original
