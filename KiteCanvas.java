@@ -10,6 +10,7 @@ import java.io.*;
 
 import com.psychicorigami.physics.*;
 import com.psychicorigami.scene.ImageShape;
+import com.psychicorigami.scene.RopeShape;
 import com.psychicorigami.scene.Scene;
 
 public class KiteCanvas extends JPanel {
@@ -20,7 +21,7 @@ public class KiteCanvas extends JPanel {
     
     private ArrayList<Body2D> kite = new ArrayList<Body2D>();
     private ImageShape kiteShape = null;
-    
+    private ArrayList<RopeShape> ropeShapes = new ArrayList<RopeShape>();
     
     private Rope2D mainRope = null;
     private ArrayList<Rope2D> kiteRopes = new ArrayList<Rope2D>();
@@ -127,8 +128,16 @@ public class KiteCanvas extends JPanel {
         BufferedImage img = ImageIO.read(getClass().getResource("/images/kite.png"));
         
         kiteShape = new ImageShape(img);
-        
         scene.add(kiteShape, SCENE_MIDDLEGROUND);
+        
+        for ( Rope2D r: kiteRopes ) {
+            RopeShape rope = new RopeShape(Color.GRAY);
+            ropeShapes.add(rope);
+            scene.add(rope, SCENE_MIDDLEGROUND);
+        }
+        
+        
+        
         
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent me) {
@@ -214,6 +223,14 @@ public class KiteCanvas extends JPanel {
         kiteShape.setX(pos.x);
         kiteShape.setY(pos.y);
         
+        for ( int i = 0; i < kiteRopes.size(); i++ ) {
+            Rope2D rope = kiteRopes.get(i);
+            RopeShape shape = ropeShapes.get(i);
+            shape.clear();
+            for ( Body2D b: rope.getBodies() ) {
+                shape.add(b.getPos());
+            }
+        }
     }
     
     @Override
@@ -228,98 +245,7 @@ public class KiteCanvas extends JPanel {
         tx.translate(0, -getHeight());
         g2d.transform(tx);
         
-        g.setColor(Color.RED);
-        drawPolygon(g, kite, true);
-        
-        g.setColor(Color.BLACK);
-        drawLine(g, kite.get(0).getPos(), kite.get(2).getPos());
-        drawLine(g, kite.get(1).getPos(), kite.get(3).getPos());
-        
         scene.paint(g2d);
-        
-        g.setColor(Color.GRAY);
-        
-        for ( Rope2D kiteRope: kiteRopes ) {
-            drawRope(g2d, kiteRope);
-        }
-        
-        Vector2D p1 = kite.get(0).getPos();
-        Vector2D p2 = p1.add(force.multiply(dt));
-        g.drawLine((int)p1.x, (int)(p1.y), (int)p2.x, (int)(p2.y));
-        
-        
-    }
-    
-    private void drawRope(Graphics2D g, Rope2D rope) {
-        drawCurve(g, rope.getBodies());
-    }
-    
-    private void drawCurve(Graphics2D g, java.util.List<Body2D> bodies) {
-        if ( bodies.size() <= 2 ) {
-            drawPolygon(g, bodies, false);
-        }
-        else {
-            
-            double controlLength = 0.2;
-            
-            for ( int i = 1; i < bodies.size(); i++ ) {
-                Vector2D p1 = bodies.get(i-1).getPos();
-                Vector2D p2 = bodies.get(i).getPos();
-                
-                double len = p1.subtract(p2).length();
-                
-                Vector2D c = p1.subtract(p2).unit();
-                
-                /*g.setColor(Color.BLACK);
-                g.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
-                
-                g.setColor(Color.BLUE);*/
-                
-                Vector2D c1 = p1.subtract(c.multiply(len*controlLength));
-                if ( i > 1 ) {
-                    Vector2D p0 = bodies.get(i-2).getPos();
-                    c1 = p1.add(p1.subtract(p0).unit().multiply(len*controlLength));
-                }
-                Vector2D c2 = p2.add(c.multiply(len*controlLength));
-                if ( i < (bodies.size()-1) ) {
-                    Vector2D p3 = bodies.get(i+1).getPos();
-                    c2 = p2.add(p2.subtract(p3).unit().multiply(len*controlLength));
-                }
-                
-                
-                /*g.setColor(Color.GREEN);
-                g.fillOval((int)(c1.x-2), (int)(c1.y-2), 4, 4);
-                g.fillOval((int)(c2.x-2), (int)(c2.y-2), 4, 4);
-                
-                g.setColor(Color.RED);
-                g.fillRect((int)(p1.x-2), (int)(p1.y-2), 4, 4);*/
-                
-                //g.setColor(Color.GRAY);
-                CubicCurve2D.Double q = new CubicCurve2D.Double(p1.x, p1.y, c1.x, c1.y, c2.x, c2.y, p2.x, p2.y);
-                g.draw(q);
-                
-                
-            }
-        }
-    }
-    
-    private void drawPolygon(Graphics g, java.util.List<Body2D> bodies, boolean join) {
-        Vector2D prevPos = null;
-        if ( join && bodies.size() > 0 ) {
-            prevPos = bodies.get(bodies.size()-1).getPos();
-        }
-        for ( Body2D b: bodies ) {
-            Vector2D pos = b.getPos();
-            if ( prevPos != null ) {
-                drawLine(g, pos, prevPos);
-            }
-            prevPos = pos;
-        }
-    }
-    
-    private void drawLine(Graphics g, Vector2D p1, Vector2D p2) {
-        int height = getHeight();
-        g.drawLine((int)(p1.x), (int)(p1.y), (int)(p2.x), (int)(p2.y));
     }
     
     @Override
