@@ -20,6 +20,7 @@ import java.awt.image.*;
 
 public class Layer {
     private BufferedImage backing = null;
+    private BufferedImage shadow = null;
     private int[] source = null;
     private int[] destination = null;
     
@@ -34,6 +35,7 @@ public class Layer {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
         backing = gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
+        shadow = gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
         source = new int[width*height];
         destination = new int[width*height];
     }
@@ -55,25 +57,22 @@ public class Layer {
             
             paintShapes(gb);
             
-            gb.setComposite(AlphaComposite.SrcIn);
-            gb.setColor(Color.BLACK);
-            gb.fillRect(0, 0, backing.getWidth(), backing.getHeight());
-            
             gb.dispose();
             
-            BufferedImage blurred = blur(backing);
+            BufferedImage shadow = createDropShadow(backing);
             
             // render shadow
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-            g.drawImage(blurred, 1, -1, null);
+            //g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+            g.drawImage(shadow, 1, -1, null);
             
             // draw original
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-            paintShapes(g);
+            //paintShapes(g);
+            g.drawImage(backing, 0, 0, null);
         }
     }
     
-    public BufferedImage blur(BufferedImage img) {
+    public BufferedImage createDropShadow(BufferedImage img) {
         int width = img.getWidth(), height = img.getHeight();
         
         WritableRaster raster = img.getRaster();
@@ -84,9 +83,10 @@ public class Layer {
         blur(destination, source, width, height, 2);
         for ( int i = 0; i < source.length; i++ ) source[i] = (source[i] & 0xFF) << 24;
         
-        raster.setDataElements(0, 0, width, height, source);
+        WritableRaster shadowRaster = shadow.getRaster();
+        shadowRaster.setDataElements(0, 0, width, height, source);
         
-        return img;
+        return shadow;
     }
     
     public static void blur(int[] inPixels, int[] outPixels, final int width, final int height, final int radius) {
