@@ -79,37 +79,37 @@ public class Layer {
         WritableRaster raster = img.getRaster();
         raster.getDataElements(0, 0, width, height, source);
         
-        convolveAndTranspose(source, destination, width, height);
-        convolveAndTranspose(destination, source, width, height);
+        for ( int i = 0; i < source.length; i++ ) source[i] = (source[i] >> 24) & 0xFF;
+        blur(source, destination, width, height, 2);
+        blur(destination, source, width, height, 2);
+        for ( int i = 0; i < source.length; i++ ) source[i] = (source[i] & 0xFF) << 24;
         
         raster.setDataElements(0, 0, width, height, source);
         
         return img;
     }
     
-    public static void convolveAndTranspose(int[] inPixels, int[] outPixels, int width, int height) {
+    public static void blur(int[] inPixels, int[] outPixels, final int width, final int height, final int radius) {
+        final int radiusPlusOne = radius+1;
+        
+        int inIndex = 0;
         for (int y = 0; y < height; y++) {
-            int index = y;
-            int ioffset = y*width;
+            int outIndex = y;
             for (int x = 0; x < width; x++) {
                 int sum = 0;
-                int count = 0;
                 
-                int radius = 2;
+                int xleft  = inIndex + Math.max(0, x-radius);
+                int xright = inIndex + Math.min(width, x+radiusPlusOne);
                 
-                int xleft  = Math.max(0, x-radius);
-                int xright = Math.min(width-1, x+radius);
-                
-                for ( int i = xleft; i <= xright; i++ ) {
-                    int p = inPixels[ioffset + i];
-                    int a = (p >> 24) & 0xFF;
-                    sum += a;
-                    count++;
+                for ( int i = xleft; i < xright; i++ ) {
+                    sum += inPixels[i];
                 }
                 
-                outPixels[index] = ((sum/count) & 0xFF) << 24;
-                index += height;
+                int count = (xright-xleft)+1;
+                outPixels[outIndex] = ((sum/count) & 0xFF);
+                outIndex += height;
             }
+            inIndex += width;
         }
     }
     
