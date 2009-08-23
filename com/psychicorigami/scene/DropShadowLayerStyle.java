@@ -44,10 +44,8 @@ public class DropShadowLayerStyle implements LayerStyle {
         int width  = layer.getWidth(),
             height = layer.getHeight();
         
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
-        backing = gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
-        shadow = gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
+        backing = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        shadow = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
     
     public void paint(Layer layer, Graphics2D g) {
@@ -70,9 +68,7 @@ public class DropShadowLayerStyle implements LayerStyle {
         gb.dispose();
         
         Graphics2D gs = shadow.createGraphics();
-        gs.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-        gs.fillRect(0, 0, shadow.getWidth(), shadow.getHeight());
-        gs.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        gs.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
         gs.drawImage(backing, 0, 0, null);
         gs.dispose();
         applyShadow(shadow);
@@ -81,9 +77,7 @@ public class DropShadowLayerStyle implements LayerStyle {
         g.drawImage(shadow, distX, distY, null);
         
         // draw original
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
         g.drawImage(backing, 0, 0, null);
-        
     }
     
     // from http://www.jroller.com/gfx/entry/fast_or_good_drop_shadows
