@@ -1,9 +1,9 @@
 package com.psychicorigami.scene;
 
-import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 public interface LayerStyle {
     
-    public void paint(Layer layer, Graphics2D g);
+    public BufferedImage apply(Layer layer, BufferedImage image);
     
 }

@@ -13,7 +13,6 @@ import java.awt.image.WritableRaster;
 import java.awt.image.DataBufferInt;
 
 public class DropShadowLayerStyle implements LayerStyle {
-    private BufferedImage backing = null;
     private BufferedImage shadow = null;
     
     private int shadowSize;
@@ -33,9 +32,11 @@ public class DropShadowLayerStyle implements LayerStyle {
     }
     
     private boolean hasBacking(Layer layer) {
-        if ( backing == null )
+        if ( shadow == null )
             return false;
-        if ( backing.getWidth() != layer.getWidth() || backing.getHeight() != layer.getHeight() )
+        int width  = layer.getWidth() + shadowSize,
+            height = layer.getHeight() + shadowSize;
+        if ( shadow.getWidth() != width || shadow.getHeight() != height )
             return false;
         return true;
     }
@@ -44,40 +45,26 @@ public class DropShadowLayerStyle implements LayerStyle {
         int width  = layer.getWidth(),
             height = layer.getHeight();
         
-        backing = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         shadow = new BufferedImage(width + shadowSize, height + shadowSize, BufferedImage.TYPE_INT_ARGB);
     }
     
-    public void paint(Layer layer, Graphics2D g) {
+    public BufferedImage apply(Layer layer, BufferedImage image) {
         if ( !hasBacking(layer) ) {
             initBacking(layer);
         }
         
-        Graphics2D gb = backing.createGraphics();
-        gb.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        // set to all transparent
-        gb.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-        gb.fillRect(0, 0, backing.getWidth(), backing.getHeight());
-        
-        // now render normally
-        gb.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-        
-        layer.paintShapes(gb);
-        
-        gb.dispose();
-        
         Graphics2D gs = shadow.createGraphics();
         gs.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
-        gs.drawImage(backing, shadowSize/2, shadowSize/2, null);
+        gs.drawImage(image, shadowSize/2, shadowSize/2, null);
         gs.dispose();
         applyShadow(shadow);
         
-        // render shadow
-        g.drawImage(shadow, distX - (shadowSize/2), distY - (shadowSize/2), null);
+        Graphics2D gb = image.createGraphics();
+        gb.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OVER));
+        gb.drawImage(shadow, distX - (shadowSize/2), distY - (shadowSize/2), null);
+        gb.dispose();
         
-        // draw original
-        g.drawImage(backing, 0, 0, null);
+        return image;
     }
     
     // from http://www.jroller.com/gfx/entry/fast_or_good_drop_shadows
