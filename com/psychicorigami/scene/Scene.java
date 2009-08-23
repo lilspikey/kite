@@ -7,6 +7,12 @@ import java.util.TreeMap;
 public class Scene {
     private Map<Integer, Layer> layers = new TreeMap<Integer, Layer>();
     
+    public void setSize(int width, int height) {
+        for ( Layer layer: layers.values() ) {
+            layer.setSize(width, height);
+        }
+    }
+    
     public void add(Shape shape, int layer) {
         Layer l = layers.get(layer);
         if ( l == null ) {

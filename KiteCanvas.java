@@ -36,6 +36,13 @@ public class KiteCanvas extends JPanel {
     private Vector2D force = new Vector2D();
     
     public KiteCanvas() throws IOException {
+        
+        addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                scene.setSize(getWidth(), getHeight());
+            }
+        });
+        
         space.setGravity( new Vector2D(0, -10) );
         space.addGlobalConstraint(new FloorConstraint());
         

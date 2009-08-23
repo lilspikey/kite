@@ -23,7 +23,7 @@ public class Layer {
     private int width = 500;
     private int height = 500;
     
-    private LayerStyle style = new DropShadowLayerStyle();
+    private LayerStyle style = null;//new DropShadowLayerStyle();
     
     public int getWidth() {
         return width;
@@ -33,11 +33,17 @@ public class Layer {
         return height;
     }
     
+    public void setSize(int width, int height) {
+        this.width  = width;
+        this.height = height;
+    }
+    
     public void add(Shape shape) {
         shapes.add(shape);
     }
     
     public void paint(Graphics2D g) {
+        g.setClip(0, 0, width, height);
         if ( style == null ) {
             paintShapes(g);
         }

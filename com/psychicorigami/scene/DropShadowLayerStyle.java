@@ -45,7 +45,7 @@ public class DropShadowLayerStyle implements LayerStyle {
             height = layer.getHeight();
         
         backing = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        shadow = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        shadow = new BufferedImage(width + shadowSize, height + shadowSize, BufferedImage.TYPE_INT_ARGB);
     }
     
     public void paint(Layer layer, Graphics2D g) {
@@ -69,12 +69,12 @@ public class DropShadowLayerStyle implements LayerStyle {
         
         Graphics2D gs = shadow.createGraphics();
         gs.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
-        gs.drawImage(backing, 0, 0, null);
+        gs.drawImage(backing, shadowSize/2, shadowSize/2, null);
         gs.dispose();
         applyShadow(shadow);
         
         // render shadow
-        g.drawImage(shadow, distX, distY, null);
+        g.drawImage(shadow, distX - (shadowSize/2), distY - (shadowSize/2), null);
         
         // draw original
         g.drawImage(backing, 0, 0, null);
