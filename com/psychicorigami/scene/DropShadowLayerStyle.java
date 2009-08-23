@@ -10,26 +10,24 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
-import java.awt.image.BufferedImageOp;
+import java.awt.image.DataBufferInt;
 
 public class DropShadowLayerStyle implements LayerStyle {
     private BufferedImage backing = null;
     private BufferedImage shadow = null;
-    private int[] source = null;
-    private int[] destination = null;
     
-    private int blurRadius;
+    private int shadowSize;
+    private float shadowOpacity = 0.5f;
+    private Color shadowColor = new Color(0x000000);
     private int distX;
     private int distY;
     
     public DropShadowLayerStyle() {
-        this(2, 1, -1);
+        this(9, 2, -2);
     }
     
-    public DropShadowLayerStyle(int blurRadius, int distX, int distY) {
-        this.blurRadius = blurRadius;
+    public DropShadowLayerStyle(int shadowSize, int distX, int distY) {
+        this.shadowSize = shadowSize;
         this.distX = distX;
         this.distY = distY;
     }
@@ -50,8 +48,6 @@ public class DropShadowLayerStyle implements LayerStyle {
         GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
         backing = gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
         shadow = gc.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
-        source = new int[width*height];
-        destination = new int[width*height];
     }
     
     public void paint(Layer layer, Graphics2D g) {
@@ -73,57 +69,108 @@ public class DropShadowLayerStyle implements LayerStyle {
         
         gb.dispose();
         
-        BufferedImage shadow = createDropShadow(backing);
+        Graphics2D gs = shadow.createGraphics();
+        gs.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+        gs.fillRect(0, 0, shadow.getWidth(), shadow.getHeight());
+        gs.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        gs.drawImage(backing, 0, 0, null);
+        gs.dispose();
+        applyShadow(shadow);
         
         // render shadow
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         g.drawImage(shadow, distX, distY, null);
         
         // draw original
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-        //paintShapes(g);
         g.drawImage(backing, 0, 0, null);
         
     }
     
-    public BufferedImage createDropShadow(BufferedImage img) {
-        int width = img.getWidth(), height = img.getHeight();
+    // from http://www.jroller.com/gfx/entry/fast_or_good_drop_shadows
+    private void applyShadow(BufferedImage image) {
         
-        WritableRaster raster = img.getRaster();
-        raster.getDataElements(0, 0, width, height, source);
+        int dstWidth = image.getWidth();
+        int dstHeight = image.getHeight();
+
+        int left = (shadowSize - 1) >> 1;
+        int right = shadowSize - left;
+        int xStart = left;
+        int xStop = dstWidth - right;
+        int yStart = left;
+        int yStop = dstHeight - right;
+
+        int shadowRgb = shadowColor.getRGB() & 0x00FFFFFF;
         
-        for ( int i = 0; i < source.length; i++ ) source[i] = (source[i] >> 24) & 0xFF;
-        blur(source, destination, width, height, blurRadius);
-        blur(destination, source, width, height, blurRadius);
-        for ( int i = 0; i < source.length; i++ ) source[i] = (source[i] & 0xFF) << 24;
-        
-        WritableRaster shadowRaster = shadow.getRaster();
-        shadowRaster.setDataElements(0, 0, width, height, source);
-        
-        return shadow;
-    }
-    
-    public static void blur(int[] inPixels, int[] outPixels, final int width, final int height, final int radius) {
-        final int radiusPlusOne = radius+1;
-        
-        int inIndex = 0;
-        for (int y = 0; y < height; y++) {
-            int outIndex = y;
-            for (int x = 0; x < width; x++) {
-                int sum = 0;
-                
-                int xleft  = inIndex + Math.max(0, x-radius);
-                int xright = inIndex + Math.min(width, x+radiusPlusOne);
-                
-                for ( int i = xleft; i < xright; i++ ) {
-                    sum += inPixels[i];
-                }
-                
-                int count = (xright-xleft)+1;
-                outPixels[outIndex] = ((sum/count) & 0xFF);
-                outIndex += height;
+        int[] aHistory = new int[shadowSize];
+        int historyIdx = 0;
+
+        int aSum;
+
+        int[] dataBuffer = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+        int lastPixelOffset = right * dstWidth;
+        float sumDivider = shadowOpacity / shadowSize;
+
+        // horizontal pass
+
+        for (int y = 0, bufferOffset = 0; y < dstHeight; y++, bufferOffset = y * dstWidth) {
+            aSum = 0;
+            historyIdx = 0;
+            for (int x = 0; x < shadowSize; x++, bufferOffset++) {
+                int a = dataBuffer[bufferOffset] >>> 24;
+                dataBuffer[bufferOffset] = 0;
+                aHistory[x] = a;
+                aSum += a;
             }
-            inIndex += width;
+
+            bufferOffset -= right;
+
+            for (int x = xStart; x < xStop; x++, bufferOffset++) {
+                int a = (int) (aSum * sumDivider);
+                dataBuffer[bufferOffset] = a << 24 | shadowRgb;
+
+                // substract the oldest pixel from the sum
+                aSum -= aHistory[historyIdx];
+
+                // get the lastest pixel
+                a = dataBuffer[bufferOffset + right] >>> 24;
+                aHistory[historyIdx] = a;
+                aSum += a;
+
+                if (++historyIdx >= shadowSize) {
+                    historyIdx -= shadowSize;
+                }
+            }
+        }
+
+        // vertical pass
+        for (int x = 0, bufferOffset = 0; x < dstWidth; x++, bufferOffset = x) {
+            aSum = 0;
+            historyIdx = 0;
+            for (int y = 0; y < shadowSize; y++, bufferOffset += dstWidth) {
+                int a = dataBuffer[bufferOffset] >>> 24;
+                dataBuffer[bufferOffset] = 0;
+                aHistory[y] = a;
+                aSum += a;
+            }
+
+            bufferOffset -= lastPixelOffset;
+
+            for (int y = yStart; y < yStop; y++, bufferOffset += dstWidth) {
+                int a = (int) (aSum * sumDivider);
+                dataBuffer[bufferOffset] = a << 24 | shadowRgb;
+
+                // substract the oldest pixel from the sum
+                aSum -= aHistory[historyIdx];
+
+                // get the lastest pixel
+                a = dataBuffer[bufferOffset + lastPixelOffset] >>> 24;
+                aHistory[historyIdx] = a;
+                aSum += a;
+
+                if (++historyIdx >= shadowSize) {
+                    historyIdx -= shadowSize;
+                }
+            }
         }
     }
     
