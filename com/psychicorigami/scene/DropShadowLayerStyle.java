@@ -44,7 +44,7 @@ public class DropShadowLayerStyle implements LayerStyle {
     }
     
     public void shapeRemoved(Shape shape) {
-        
+        shadows.remove(shape);
     }
     
     public void preRender(Layer layer, BufferedImage image) {

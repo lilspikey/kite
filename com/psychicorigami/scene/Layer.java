@@ -28,6 +28,7 @@ public class Layer {
     private List<LayerStyle> styles = new ArrayList<LayerStyle>();
     {
         styles.add(new DropShadowLayerStyle());
+        styles.add(new ColoriseLayerStyle());
     }
     
     public int getWidth() {
