@@ -20,6 +20,10 @@ public class ImageShape extends AbstractShape {
         this.image = image;
     }
     
+    public BufferedImage getImage() {
+        return image;
+    }
+    
     public void paintShape(Graphics2D g) {
         double width  = image.getWidth();
         double height = image.getHeight();

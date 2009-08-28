@@ -2,8 +2,10 @@ package com.psychicorigami.scene;
 
 import java.awt.image.BufferedImage;
 
-public interface LayerStyle {
+public interface LayerStyle extends LayerListener {
     
-    public BufferedImage apply(Layer layer, BufferedImage image);
+    public void preRender(Layer layer, BufferedImage image);
+    
+    public void postRender(Layer layer, BufferedImage image);
     
 }

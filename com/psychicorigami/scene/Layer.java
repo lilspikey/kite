@@ -27,7 +27,7 @@ public class Layer {
     
     private List<LayerStyle> styles = new ArrayList<LayerStyle>();
     {
-        //styles.add(new DropShadowLayerStyle());
+        styles.add(new DropShadowLayerStyle());
     }
     
     public int getWidth() {
@@ -57,6 +57,32 @@ public class Layer {
     
     public void add(Shape shape) {
         shapes.add(shape);
+        for ( LayerStyle style: styles ) {
+            style.shapeAdded(shape);
+        }
+    }
+    
+    private BufferedImage clearBacking() {
+        Graphics2D gb = backing.createGraphics();
+
+        // set to all transparent
+        gb.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+        gb.fillRect(0, 0, backing.getWidth(), backing.getHeight());
+
+        // now render normally
+        gb.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        gb.dispose();
+        
+        return backing;
+    }
+    
+    private void render(BufferedImage image) {
+        Graphics2D gb = image.createGraphics();
+        gb.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        paintShapes(gb);
+        
+        gb.dispose();
     }
     
     public void paint(Graphics2D g) {
@@ -64,33 +90,19 @@ public class Layer {
             initBacking();
         }
         
-        g.setClip(0, 0, width, height);
-        if ( styles.isEmpty() ) {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            paintShapes(g);
+        BufferedImage backing = clearBacking();
+        
+        for ( LayerStyle style: styles ) {
+            style.preRender(this, backing);
         }
-        else {
-            Graphics2D gb = backing.createGraphics();
-            gb.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // set to all transparent
-            gb.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-            gb.fillRect(0, 0, backing.getWidth(), backing.getHeight());
-
-            // now render normally
-            gb.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-
-            paintShapes(gb);
-
-            gb.dispose();
-            
-            BufferedImage img = backing;
-            for ( LayerStyle style: styles ) {
-                img = style.apply(this, img);
-            }
-            
-            g.drawImage(img, 0, 0, null);
+        
+        render(backing);
+        
+        for ( LayerStyle style: styles ) {
+            style.postRender(this, backing);
         }
+            
+        g.drawImage(backing, 0, 0, null);
     }
     
     public void paintShapes(Graphics2D g) {

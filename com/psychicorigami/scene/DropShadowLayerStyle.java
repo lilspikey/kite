@@ -12,14 +12,18 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.DataBufferInt;
 
+import java.util.Map;
+import java.util.LinkedHashMap;
+
 public class DropShadowLayerStyle implements LayerStyle {
-    private BufferedImage shadow = null;
     
     private int shadowSize;
     private float shadowOpacity = 0.5f;
     private Color shadowColor = new Color(0x000000);
     private int distX;
     private int distY;
+    
+    private Map<ImageShape, ImageShape> shadows = new LinkedHashMap<ImageShape, ImageShape>();
     
     public DropShadowLayerStyle() {
         this(9, 2, -2);
@@ -31,40 +35,51 @@ public class DropShadowLayerStyle implements LayerStyle {
         this.distY = distY;
     }
     
-    private boolean hasBacking(Layer layer) {
-        if ( shadow == null )
-            return false;
-        int width  = layer.getWidth() + shadowSize,
-            height = layer.getHeight() + shadowSize;
-        if ( shadow.getWidth() != width || shadow.getHeight() != height )
-            return false;
-        return true;
+    public void shapeAdded(Shape shape) {
+        if ( shape instanceof ImageShape ) {
+            ImageShape imageShape = (ImageShape)shape;
+            ImageShape shadow = new ImageShape(createShadow(imageShape.getImage()));
+            shadows.put(imageShape, shadow);
+        }
     }
     
-    private void initBacking(Layer layer) {
-        int width  = layer.getWidth(),
-            height = layer.getHeight();
+    public void shapeRemoved(Shape shape) {
         
-        shadow = new BufferedImage(width + shadowSize, height + shadowSize, BufferedImage.TYPE_INT_ARGB);
     }
     
-    public BufferedImage apply(Layer layer, BufferedImage image) {
-        if ( !hasBacking(layer) ) {
-            initBacking(layer);
+    public void preRender(Layer layer, BufferedImage image) {
+        Graphics2D g = image.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.translate(distX, distY);
+        
+        for ( Map.Entry<ImageShape,ImageShape> entry: shadows.entrySet() ) {
+            ImageShape shape = entry.getKey();
+            ImageShape shadow = entry.getValue();
+            
+            shadow.setX(shape.getX());
+            shadow.setY(shape.getY());
+            shadow.setAngle(shape.getAngle());
+            
+            shadow.paint(g);
         }
         
+        g.dispose();
+    }
+    
+    public void postRender(Layer layer, BufferedImage image) {
+        
+    }
+    
+    private BufferedImage createShadow(BufferedImage image) {
+        BufferedImage shadow = new BufferedImage(image.getWidth()+shadowSize, image.getHeight()+shadowSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D gs = shadow.createGraphics();
-        gs.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+        
         gs.drawImage(image, shadowSize/2, shadowSize/2, null);
         gs.dispose();
+        
         applyShadow(shadow);
         
-        Graphics2D gb = image.createGraphics();
-        gb.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OVER));
-        gb.drawImage(shadow, distX - (shadowSize/2), distY - (shadowSize/2), null);
-        gb.dispose();
-        
-        return image;
+        return shadow;
     }
     
     // from http://www.jroller.com/gfx/entry/fast_or_good_drop_shadows
