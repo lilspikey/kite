@@ -17,8 +17,16 @@ import java.util.LinkedHashMap;
 
 public class ColoriseLayerStyle implements LayerStyle {
     private float opacity = 0.5f;
-    private Color color = new Color(0x990000);
-        
+    private Color color = new Color(0x000000);
+    
+    public void setOpacity(float opacity) {
+        this.opacity = opacity;
+    }
+    
+    public float getOpacity() {
+        return opacity;
+    }
+    
     public void shapeAdded(Shape shape) {
         
     }

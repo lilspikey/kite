@@ -12,10 +12,12 @@ import com.psychicorigami.physics.*;
 import com.psychicorigami.scene.ImageShape;
 import com.psychicorigami.scene.RopeShape;
 import com.psychicorigami.scene.Scene;
+import com.psychicorigami.scene.ColoriseLayerStyle;
 
 public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
     private Scene scene = new Scene();
+    ColoriseLayerStyle layerTint = new ColoriseLayerStyle();
     
     private final int SCENE_MIDDLEGROUND = 1;
     
@@ -36,6 +38,9 @@ public class KiteCanvas extends JPanel {
     private Vector2D force = new Vector2D();
     
     public KiteCanvas() throws IOException {
+        
+        scene.addLayerStyle(layerTint, SCENE_MIDDLEGROUND);
+        layerTint.setOpacity(1);
         
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
@@ -238,6 +243,12 @@ public class KiteCanvas extends JPanel {
                 shape.add(b.getPos());
             }
         }
+        
+        float opacity = layerTint.getOpacity();
+        opacity -= 0.01;
+        if ( opacity < 0 )
+            opacity = 0;
+        layerTint.setOpacity(opacity);
     }
     
     @Override

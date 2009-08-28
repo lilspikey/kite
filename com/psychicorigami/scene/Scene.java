@@ -13,13 +13,23 @@ public class Scene {
         }
     }
     
-    public void add(Shape shape, int layer) {
+    private Layer getOrCreateLayer(int layer) {
         Layer l = layers.get(layer);
         if ( l == null ) {
             l = new Layer();
             layers.put(layer, l);
         }
+        return l;
+    }
+    
+    public void add(Shape shape, int layer) {
+        Layer l = getOrCreateLayer(layer);
         l.add(shape);
+    }
+    
+    public void addLayerStyle(LayerStyle style, int layer) {
+        Layer l = getOrCreateLayer(layer);
+        l.addLayerStyle(style);
     }
     
     public void paint(Graphics2D g) {

@@ -28,7 +28,6 @@ public class Layer {
     private List<LayerStyle> styles = new ArrayList<LayerStyle>();
     {
         styles.add(new DropShadowLayerStyle());
-        styles.add(new ColoriseLayerStyle());
     }
     
     public int getWidth() {
@@ -42,6 +41,10 @@ public class Layer {
     public void setSize(int width, int height) {
         this.width  = width;
         this.height = height;
+    }
+    
+    public void addLayerStyle(LayerStyle style) {
+        styles.add(style);
     }
     
     private boolean hasBacking() {
