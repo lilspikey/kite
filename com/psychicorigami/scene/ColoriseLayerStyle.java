@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 
 public class ColoriseLayerStyle implements LayerStyle {
-    private float opacity = 0.25f;
+    private float opacity = 0.5f;
     private Color color = new Color(0x990000);
         
     public void shapeAdded(Shape shape) {
@@ -33,6 +33,7 @@ public class ColoriseLayerStyle implements LayerStyle {
     
     public void postRender(Layer layer, BufferedImage image) {
         Graphics2D g = image.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
         g.setColor(color);
         g.fillRect(0, 0, image.getWidth(), image.getHeight());
