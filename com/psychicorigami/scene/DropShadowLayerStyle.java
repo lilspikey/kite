@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 public class DropShadowLayerStyle implements LayerStyle {
     
     private int shadowSize;
-    private float shadowOpacity = 0.5f;
+    private float shadowOpacity = 0.75f;
     private Color shadowColor = new Color(0x000000);
     private int distX;
     private int distY;
@@ -71,10 +71,12 @@ public class DropShadowLayerStyle implements LayerStyle {
     }
     
     private BufferedImage createShadow(BufferedImage image) {
-        BufferedImage shadow = new BufferedImage(image.getWidth()+shadowSize, image.getHeight()+shadowSize, BufferedImage.TYPE_INT_ARGB);
+        int shadowWidth  = image.getWidth() + 2*shadowSize;
+        int shadowHeight = image.getHeight() + 2*shadowSize;
+        BufferedImage shadow = new BufferedImage(shadowWidth, shadowHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D gs = shadow.createGraphics();
         
-        gs.drawImage(image, shadowSize/2, shadowSize/2, null);
+        gs.drawImage(image, shadowSize, shadowSize, null);
         gs.dispose();
         
         applyShadow(shadow);
