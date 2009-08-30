@@ -1,6 +1,7 @@
 package com.psychicorigami.scene;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -30,6 +31,11 @@ public class Scene {
     public void addLayerStyle(LayerStyle style, int layer) {
         Layer l = getOrCreateLayer(layer);
         l.addLayerStyle(style);
+    }
+    
+    public void setBackground(BufferedImage background, int layer) {
+        Layer l = getOrCreateLayer(layer);
+        l.setBackground(background);
     }
     
     public void paint(Graphics2D g) {

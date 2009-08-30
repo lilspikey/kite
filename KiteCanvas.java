@@ -19,6 +19,7 @@ public class KiteCanvas extends JPanel {
     private Scene scene = new Scene();
     ColoriseLayerStyle layerTint = new ColoriseLayerStyle();
     
+    private final int SCENE_BACKGROUND = 0;
     private final int SCENE_MIDDLEGROUND = 1;
     
     private ArrayList<Body2D> kite = new ArrayList<Body2D>();
@@ -137,9 +138,9 @@ public class KiteCanvas extends JPanel {
         space.add(tail);
         space.add(new StickConstraint<Body2D, Vector2D>(c3, tail.getStart()));
         kiteRopes.add(tail);*/
-        BufferedImage img = ImageIO.read(getClass().getResource("/images/kite.png"));
+        BufferedImage kiteImg = ImageIO.read(getClass().getResource("/images/kite.png"));
         
-        kiteShape = new ImageShape(img);
+        kiteShape = new ImageShape(kiteImg);
         scene.add(kiteShape, SCENE_MIDDLEGROUND);
         
         for ( Rope2D r: kiteRopes ) {
@@ -147,6 +148,9 @@ public class KiteCanvas extends JPanel {
             ropeShapes.add(rope);
             scene.add(rope, SCENE_MIDDLEGROUND);
         }
+        
+        BufferedImage skyImg = ImageIO.read(getClass().getResource("/images/sky.jpg"));
+        scene.setBackground(skyImg, SCENE_BACKGROUND);
         
         
         

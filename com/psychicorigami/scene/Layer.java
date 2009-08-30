@@ -23,6 +23,7 @@ public class Layer {
     private int width = 500;
     private int height = 500;
     
+    private BufferedImage background = null;
     private BufferedImage backing = null;
     
     private List<LayerStyle> styles = new ArrayList<LayerStyle>();
@@ -41,6 +42,10 @@ public class Layer {
     public void setSize(int width, int height) {
         this.width  = width;
         this.height = height;
+    }
+    
+    public void setBackground(BufferedImage background) {
+        this.background = background;
     }
     
     public void addLayerStyle(LayerStyle style) {
@@ -89,12 +94,32 @@ public class Layer {
         gb.dispose();
     }
     
+    public void paintBackground(BufferedImage backing) {
+        if ( background != null ) {
+            Graphics2D gb = backing.createGraphics();
+            
+            AffineTransform tx = new AffineTransform();
+            
+            int width = background.getWidth();
+            int height = background.getHeight();
+            
+            tx.translate((width/2.0), (height/2.0));
+            tx.rotate(Math.PI);
+            tx.translate(-(width/2.0), -(height/2.0));
+            
+            gb.transform(tx);
+            
+            gb.drawImage(background, (width-getWidth())/2, (height-getHeight())/2, null);
+        }
+    }
+    
     public void paint(Graphics2D g) {
         if ( !hasBacking() ) {
             initBacking();
         }
         
         BufferedImage backing = clearBacking();
+        paintBackground(backing);
         
         for ( LayerStyle style: styles ) {
             style.preRender(this, backing);
