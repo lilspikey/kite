@@ -143,8 +143,9 @@ public class KiteCanvas extends JPanel {
         kiteShape = new ImageShape(kiteImg);
         scene.add(kiteShape, SCENE_MIDDLEGROUND);
         
+        Color ropeColor = new Color(0xFF885522);
         for ( Rope2D r: kiteRopes ) {
-            RopeShape rope = new RopeShape(Color.GRAY);
+            RopeShape rope = new RopeShape(ropeColor);
             ropeShapes.add(rope);
             scene.add(rope, SCENE_MIDDLEGROUND);
         }
