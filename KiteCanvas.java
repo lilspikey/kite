@@ -13,6 +13,7 @@ import com.psychicorigami.scene.ImageShape;
 import com.psychicorigami.scene.RopeShape;
 import com.psychicorigami.scene.Scene;
 import com.psychicorigami.scene.ColoriseLayerStyle;
+import com.psychicorigami.scene.DropShadowLayerStyle;
 
 public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
@@ -40,6 +41,7 @@ public class KiteCanvas extends JPanel {
     
     public KiteCanvas() throws IOException {
         
+        scene.addLayerStyle(new DropShadowLayerStyle(), SCENE_MIDDLEGROUND);
         scene.addLayerStyle(layerTint, SCENE_MIDDLEGROUND);
         layerTint.setOpacity(1);
         
@@ -262,7 +264,7 @@ public class KiteCanvas extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         int height = getHeight();
-        g.clearRect(0, 0, getWidth(), height);
+        g2d.clearRect(0, 0, getWidth(), height);
         
         AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
         tx.translate(0, -getHeight());

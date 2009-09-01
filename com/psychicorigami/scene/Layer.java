@@ -27,9 +27,6 @@ public class Layer {
     private BufferedImage backing = null;
     
     private List<LayerStyle> styles = new ArrayList<LayerStyle>();
-    {
-        styles.add(new DropShadowLayerStyle());
-    }
     
     public int getWidth() {
         return width;
@@ -62,6 +59,10 @@ public class Layer {
     
     private void initBacking() {
         backing = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    }
+    
+    private boolean usesBacking() {
+        return styles.size() > 0;
     }
     
     public void add(Shape shape) {
@@ -98,22 +99,41 @@ public class Layer {
         if ( background != null ) {
             Graphics2D gb = backing.createGraphics();
             
-            AffineTransform tx = new AffineTransform();
+            paintBackground(gb);
             
-            int width = background.getWidth();
-            int height = background.getHeight();
-            
-            tx.translate((width/2.0), (height/2.0));
-            tx.rotate(Math.PI);
-            tx.translate(-(width/2.0), -(height/2.0));
-            
-            gb.transform(tx);
-            
-            gb.drawImage(background, (width-getWidth())/2, (height-getHeight())/2, null);
+            gb.dispose();
         }
     }
     
+    public void paintBackground(Graphics2D g) {
+        AffineTransform original = g.getTransform();
+        AffineTransform tx = new AffineTransform();
+            
+        int width = background.getWidth();
+        int height = background.getHeight();
+            
+        tx.translate((width/2.0), (height/2.0));
+        tx.rotate(Math.PI);
+        tx.translate(-(width/2.0), -(height/2.0));
+        
+        g.transform(tx);
+        
+        g.drawImage(background, (width-getWidth())/2, (height-getHeight())/2, null);
+        
+        if ( original != null )
+            g.setTransform(original);
+    }
+    
     public void paint(Graphics2D g) {
+        if ( usesBacking() ) {
+            paintWithBacking(g);
+        }
+        else {
+            paintWithoutBacking(g);
+        }
+    }
+    
+    public void paintWithBacking(Graphics2D g) {
         if ( !hasBacking() ) {
             initBacking();
         }
@@ -132,6 +152,16 @@ public class Layer {
         }
             
         g.drawImage(backing, 0, 0, null);
+    }
+    
+    public void paintWithoutBacking(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        if ( background != null ) {
+            paintBackground(g);
+        }
+        
+        paintShapes(g);
     }
     
     public void paintShapes(Graphics2D g) {
