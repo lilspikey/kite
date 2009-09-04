@@ -15,7 +15,7 @@ public class RopeConstraint<B extends Body<V>, V extends Vector<V>> extends Dist
         if ( error > 0 ) {
             return 0.1*error;
         }
-        return error*0.001;
+        return 0;//error*0.001;
     }
     
 }

@@ -23,7 +23,7 @@ public class KiteCanvas extends JPanel {
     private final int SCENE_BACKGROUND = 0;
     private final int SCENE_MIDDLEGROUND = 1;
     
-    private ArrayList<Body2D> kite = new ArrayList<Body2D>();
+    private Kite kite = null;
     private ImageShape kiteShape = null;
     private ArrayList<RopeShape> ropeShapes = new ArrayList<RopeShape>();
     
@@ -36,7 +36,9 @@ public class KiteCanvas extends JPanel {
     private double dt = 0.04/updateCount;
     private double rope_weight = 1;
     private double kiteMass = 10;
-    private double windStrength = 2000;
+    private double WIND_SPEED = 100;
+    private double KITE_INITIAL_SPEED=100;
+    
     private Vector2D force = new Vector2D();
     
     public KiteCanvas() throws IOException {
@@ -65,59 +67,19 @@ public class KiteCanvas extends JPanel {
         space.add(new RopeConstraint<Body2D, Vector2D>(base, mainRope.getStart()));
         
         Body2D joint = mainRope.getEnd();
-        Vector2D center = joint.getPos().add(new Vector2D(50, 0));
+        Vector2D center = joint.getPos().add(new Vector2D(40, -10));
         
-        Body2D c1 = new Body2D(center.x, center.y + 20);
-        Body2D c2 = new Body2D(center.x + 30, center.y);
-        Body2D c3 = new Body2D(center.x, center.y - 40);
-        Body2D c4 = new Body2D(center.x - 30, center.y);
+        kite = new Kite(center, kiteMass);
+        kite.setInitialVelocity(new Vector2D(0, KITE_INITIAL_SPEED), dt);
         
-        Body2D middle = new Body2D(center.x, center.y+10);
-        Body2D lower = new Body2D(center.x, center.y-30);
-        
-        c1.setMass(kiteMass);
-        c2.setMass(kiteMass);
-        c3.setMass(kiteMass);
-        c4.setMass(kiteMass);
-        
-        kite.add(c1);
-        kite.add(c2);
-        kite.add(c3);
-        kite.add(c4);
-        
-        
-        space.add(c1);
-        space.add(c2);
-        space.add(c3);
-        space.add(c4);
-        space.add(middle);
-        space.add(lower);
-        
-        // constraints between corners
-        space.add(new StickConstraint<Body2D, Vector2D>(c1, c2));
-        space.add(new StickConstraint<Body2D, Vector2D>(c2, c3));
-        space.add(new StickConstraint<Body2D, Vector2D>(c3, c4));
-        space.add(new StickConstraint<Body2D, Vector2D>(c4, c1));
-        // cross
-        space.add(new StickConstraint<Body2D, Vector2D>(c1, c3));
-        space.add(new StickConstraint<Body2D, Vector2D>(c2, c4));
-        // middle
-        space.add(new StickConstraint<Body2D, Vector2D>(c1, middle));
-        space.add(new StickConstraint<Body2D, Vector2D>(middle, c3));
-        space.add(new StickConstraint<Body2D, Vector2D>(lower, c3));
-        space.add(new StickConstraint<Body2D, Vector2D>(lower, c1));
-        
-        // give it initial velocity upwards
-        for ( Body2D b: kite ) {
-            b.setVelocity(new Vector2D(0, 200).multiply(dt));
-        }
+        space.add(kite);
         
         // now add rigging
         Rope2D topRope = new Rope2D(joint.getPos().add(new Vector2D(0.01,0.01)),
-                                    middle.getPos().add(new Vector2D(-0.01,-0.01)),
+                                    kite.getTopHook().getPos().add(new Vector2D(-0.01,-0.01)),
                                     2, rope_weight);
         Rope2D bottomRope = new Rope2D(joint.getPos().add(new Vector2D(0.01,0.01)),
-                                    lower.getPos().add(new Vector2D(-0.01,-0.01)),
+                                    kite.getBottomHook().getPos().add(new Vector2D(-0.01,-0.01)),
                                     2, rope_weight);
         
         space.add(topRope);
@@ -127,10 +89,10 @@ public class KiteCanvas extends JPanel {
         kiteRopes.add(bottomRope);
         
         space.add(new RopeConstraint<Body2D, Vector2D>(joint, topRope.getStart()));
-        space.add(new RopeConstraint<Body2D, Vector2D>(middle, topRope.getEnd()));
+        space.add(new RopeConstraint<Body2D, Vector2D>(kite.getTopHook(), topRope.getEnd()));
         
         space.add(new RopeConstraint<Body2D, Vector2D>(joint, bottomRope.getStart()));
-        space.add(new RopeConstraint<Body2D, Vector2D>(lower, bottomRope.getEnd()));
+        space.add(new RopeConstraint<Body2D, Vector2D>(kite.getBottomHook(), bottomRope.getEnd()));
         
         // add a tail
         /*Rope2D tail = new Rope2D(c3.getPos().add(new Vector2D(0.01, 0.01)),
@@ -154,8 +116,6 @@ public class KiteCanvas extends JPanel {
         
         BufferedImage skyImg = ImageIO.read(getClass().getResource("/images/sky.jpg"));
         scene.setBackground(skyImg, SCENE_BACKGROUND);
-        
-        
         
         
         addMouseListener(new MouseAdapter() {
@@ -196,7 +156,7 @@ public class KiteCanvas extends JPanel {
     }
     
     public void tick() {
-        for ( int i = 0; i < 2*updateCount; i++ ) {
+        for ( int i = 0; i < 10*updateCount; i++ ) {
             applyForces();
             space.update(dt);
         }
@@ -205,7 +165,7 @@ public class KiteCanvas extends JPanel {
     }
     
     public void applyForces() {
-        Vector2D wind = new Vector2D(windStrength, 0);
+       /* Vector2D wind = new Vector2D(windStrength, 0);
         Vector2D crossBar = kite.get(1).getPos().subtract( kite.get(3).getPos() ).unit();
         
         Vector2D force = crossBar.multiply(crossBar.dotProduct(wind));
@@ -225,20 +185,32 @@ public class KiteCanvas extends JPanel {
             b.applyForce(force);
         }
         
-        this.force = force;
+        this.force = force;*/
+        
+        /*Vector2D crossBar = kite.get(1).getPos().subtract( kite.get(3).getPos() ).unit();
+        
+        Vector2D airSpeed = new Vector2D();
+        for ( Body2D b: kite ) {
+            Vector2D v = b.getVelocity().divide(dt);
+            airSpeed = airSpeed.add(v);
+        }
+        
+        airSpeed = airSpeed.divide(-kite.size());
+        
+        airSpeed = airSpeed.add(new Vector2D(WIND_SPEED, 0));
+        
+        Vector2D force = crossBar.multiply(crossBar.dotProduct(airSpeed)).multiply(AIR_RESISTANCE);
+        
+        for ( Body2D b: kite ) {
+            b.applyForce(force);
+        }*/
+        
+        kite.applyWindForce(new Vector2D(WIND_SPEED, 0), dt);
     }
     
     public void updateScene() {
-        Body2D top = kite.get(0);
-        Body2D bottom = kite.get(2);
-        
-        Vector2D p1 = top.getPos();
-        Vector2D p2 = bottom.getPos();
-        
-        Vector2D pos = p1.add(p2).multiply(0.5);
-        Vector2D angle = p1.subtract(p2).unit();
-        
-        kiteShape.setAngle(Math.atan2(angle.y, angle.x));
+        Vector2D pos = kite.getPosition();
+        kiteShape.setAngle(kite.getAngle());
         kiteShape.setX(pos.x);
         kiteShape.setY(pos.y);
         
