@@ -29,7 +29,7 @@ public class Kite implements MultiBody<Body2D,Vector2D> {
         bottomCorner = new Body2D(center.x, center.y - 40);
         leftCorner   = new Body2D(center.x - 30, center.y);
         
-        centreOfPressure = new Body2D(center.x, center.y+1);
+        centreOfPressure = new Body2D(center.x, center.y+0.5);
         
         topHook = new Body2D(center.x, center.y+10);
         bottomHook = new Body2D(center.x, center.y-30);

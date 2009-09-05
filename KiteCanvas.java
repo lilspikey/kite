@@ -67,7 +67,7 @@ public class KiteCanvas extends JPanel {
         space.add(new RopeConstraint<Body2D, Vector2D>(base, mainRope.getStart()));
         
         Body2D joint = mainRope.getEnd();
-        Vector2D center = joint.getPos().add(new Vector2D(40, -10));
+        Vector2D center = joint.getPos().add(new Vector2D(20, -10));
         
         kite = new Kite(center, kiteMass);
         kite.setInitialVelocity(new Vector2D(0, KITE_INITIAL_SPEED), dt);
@@ -156,7 +156,7 @@ public class KiteCanvas extends JPanel {
     }
     
     public void tick() {
-        for ( int i = 0; i < 10*updateCount; i++ ) {
+        for ( int i = 0; i < 5*updateCount; i++ ) {
             applyForces();
             space.update(dt);
         }
