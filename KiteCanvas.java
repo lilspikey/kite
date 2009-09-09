@@ -32,6 +32,7 @@ public class KiteCanvas extends JPanel {
     
     private Figure figure = null;
     private ImageShape figureShape = null;
+    private ImageShape rightArmShape = null;
     
     private Body2D base = null;
     
@@ -116,6 +117,9 @@ public class KiteCanvas extends JPanel {
             scene.add(rope, SCENE_MIDDLEGROUND);
         }
         
+        BufferedImage rightArmShapeImg = ImageIO.read(getClass().getResource("/images/figure-arm-right.png"));
+        rightArmShape = new ImageShape(rightArmShapeImg);
+        scene.add(rightArmShape, SCENE_MIDDLEGROUND);
         
         BufferedImage figBodyImg = ImageIO.read(getClass().getResource("/images/figure-body.png"));
         figureShape = new ImageShape(figBodyImg);
@@ -225,6 +229,11 @@ public class KiteCanvas extends JPanel {
         figureShape.setAngle(figure.getBodyAngle());
         figureShape.setX(pos.x);
         figureShape.setY(pos.y);
+        
+        pos = figure.getRightArmPosition();
+        rightArmShape.setAngle(figure.getRightArmAngle());
+        rightArmShape.setX(pos.x);
+        rightArmShape.setY(pos.y);
         
         for ( int i = 0; i < kiteRopes.size(); i++ ) {
             Rope2D rope = kiteRopes.get(i);
