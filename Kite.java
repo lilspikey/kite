@@ -68,6 +68,14 @@ public class Kite implements MultiBody<Body2D,Vector2D> {
         return constraints;
     }
     
+    public Body2D getTopCorner() {
+        return topCorner;
+    }
+    
+    public Body2D getBottomCorner() {
+        return bottomCorner;
+    }
+    
     public Body2D getTopHook() {
         return topHook;
     }

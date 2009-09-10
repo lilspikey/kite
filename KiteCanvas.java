@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.io.*;
 
 import com.psychicorigami.physics.*;
+import com.psychicorigami.scene.PhysicsShape;
 import com.psychicorigami.scene.ImageShape;
 import com.psychicorigami.scene.RopeShape;
 import com.psychicorigami.scene.Scene;
@@ -24,15 +25,16 @@ public class KiteCanvas extends JPanel {
     private final int SCENE_MIDDLEGROUND = 1;
     
     private Kite kite = null;
-    private ImageShape kiteShape = null;
+    private PhysicsShape kiteShape = null;
     private ArrayList<RopeShape> ropeShapes = new ArrayList<RopeShape>();
     
     private Rope2D mainRope = null;
     private ArrayList<Rope2D> kiteRopes = new ArrayList<Rope2D>();
     
     private Figure figure = null;
-    private ImageShape figureShape = null;
-    private ImageShape rightArmShape = null;
+    private PhysicsShape figureShape = null;
+    private PhysicsShape rightArmShape = null;
+    private PhysicsShape leftArmShape = null;
     
     private Body2D base = null;
     
@@ -68,13 +70,13 @@ public class KiteCanvas extends JPanel {
         space.add(figure);
         space.add(new StickConstraint<Body2D, Vector2D>(base, figure.getBottom()));
         
-        Body2D hand = figure.getKiteHand();
+        Body2D hand = figure.getRightHand();
         
         mainRope = new Rope2D(new Vector2D(hand.getPos().x+0.01, hand.getPos().y), new Vector2D(300, 70), 10, rope_weight);
         space.add(mainRope);
         kiteRopes.add(mainRope);
         
-        space.add(new RopeConstraint<Body2D, Vector2D>(figure.getKiteHand(), mainRope.getStart()));
+        space.add(new RopeConstraint<Body2D, Vector2D>(hand, mainRope.getStart()));
         
         Body2D joint = mainRope.getEnd();
         Vector2D center = joint.getPos().add(new Vector2D(20, -10));
@@ -107,7 +109,7 @@ public class KiteCanvas extends JPanel {
         // add a tail
         BufferedImage kiteImg = ImageIO.read(getClass().getResource("/images/kite.png"));
         
-        kiteShape = new ImageShape(kiteImg);
+        kiteShape = new PhysicsShape(kiteImg, kite.getTopCorner(), kite.getBottomCorner());
         scene.add(kiteShape, SCENE_MIDDLEGROUND);
         
         Color ropeColor = new Color(0xFF664411);
@@ -118,11 +120,16 @@ public class KiteCanvas extends JPanel {
         }
         
         BufferedImage rightArmShapeImg = ImageIO.read(getClass().getResource("/images/figure-arm-right.png"));
-        rightArmShape = new ImageShape(rightArmShapeImg);
+        rightArmShape = new PhysicsShape(rightArmShapeImg, figure.getRightShoulder(), figure.getRightHand());
         scene.add(rightArmShape, SCENE_MIDDLEGROUND);
         
+        
+        BufferedImage leftArmShapeImg = ImageIO.read(getClass().getResource("/images/figure-arm-left.png"));
+        leftArmShape = new PhysicsShape(leftArmShapeImg, figure.getLeftShoulder(), figure.getLeftHand());
+        scene.add(leftArmShape, SCENE_MIDDLEGROUND);
+        
         BufferedImage figBodyImg = ImageIO.read(getClass().getResource("/images/figure-body.png"));
-        figureShape = new ImageShape(figBodyImg);
+        figureShape = new PhysicsShape(figBodyImg, figure.getTop(), figure.getBottom());
         scene.add(figureShape, SCENE_MIDDLEGROUND);
         
         BufferedImage skyImg = ImageIO.read(getClass().getResource("/images/sky.jpg"));
@@ -220,20 +227,6 @@ public class KiteCanvas extends JPanel {
     }
     
     public void updateScene() {
-        Vector2D pos = kite.getPosition();
-        kiteShape.setAngle(kite.getAngle());
-        kiteShape.setX(pos.x);
-        kiteShape.setY(pos.y);
-        
-        pos = figure.getBodyPosition();
-        figureShape.setAngle(figure.getBodyAngle());
-        figureShape.setX(pos.x);
-        figureShape.setY(pos.y);
-        
-        pos = figure.getRightArmPosition();
-        rightArmShape.setAngle(figure.getRightArmAngle());
-        rightArmShape.setX(pos.x);
-        rightArmShape.setY(pos.y);
         
         for ( int i = 0; i < kiteRopes.size(); i++ ) {
             Rope2D rope = kiteRopes.get(i);
