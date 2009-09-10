@@ -6,4 +6,6 @@ public interface Shape {
     
     public void paint(Graphics2D g);
     
+    public void update();
+    
 }

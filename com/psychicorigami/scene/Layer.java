@@ -125,6 +125,10 @@ public class Layer {
     }
     
     public void paint(Graphics2D g) {
+        for ( Shape shape: shapes ) {
+            shape.update();
+        }
+        
         if ( usesBacking() ) {
             paintWithBacking(g);
         }

@@ -23,6 +23,10 @@ public class RopeShape implements Shape {
         this.color = color;
     }
     
+    public void update() {
+        
+    }
+    
     public void paint(Graphics2D g) {
         g.setColor(color);
         if ( points.size() <= 2 ) {

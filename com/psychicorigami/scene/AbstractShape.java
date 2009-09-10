@@ -38,6 +38,10 @@ public abstract class AbstractShape implements Shape {
     
     public abstract void paintShape(Graphics2D g);
     
+    public void update() {
+        
+    }
+    
     public double getX() {
         return x;
     }
