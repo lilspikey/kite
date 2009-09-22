@@ -36,7 +36,8 @@ public class KiteCanvas extends JPanel {
     private PhysicsShape rightArmShape = null;
     private PhysicsShape leftArmShape = null;
     
-    private Body2D base = null;
+    private Body2D baseLeft = null;
+    private Body2D baseRight = null;
     
     private int updateCount = 10;
     private double dt = 0.04/updateCount;
@@ -62,13 +63,20 @@ public class KiteCanvas extends JPanel {
         space.setGravity( new Vector2D(0, -10) );
         space.addGlobalConstraint(new FloorConstraint());
         
-        base = new Body2D(1, 10);
-        base.setImmovable();
-        space.add(base);
+        baseLeft = new Body2D(-10, 55);
+        baseLeft.setImmovable();
+        space.add(baseLeft);
         
-        figure = new Figure(base.getPos().add(new Vector2D(0, 50)));
+        baseRight = new Body2D(10, 55);
+        baseRight.setImmovable();
+        space.add(baseRight);
+        
+        figure = new Figure(new Vector2D(0, 50));
         space.add(figure);
-        space.add(new StickConstraint<Body2D, Vector2D>(base, figure.getBottom()));
+        space.add(new StickConstraint<Body2D, Vector2D>(baseLeft, figure.getLeftShoulder()));
+        space.add(new StickConstraint<Body2D, Vector2D>(baseRight, figure.getRightShoulder()));
+        //space.add(new RopeConstraint<Body2D, Vector2D>(baseRight, figure.getLeftShoulder()));
+        //space.add(new RopeConstraint<Body2D, Vector2D>(baseLeft, figure.getRightShoulder()));
         
         Body2D hand = figure.getRightHand();
         
@@ -136,10 +144,10 @@ public class KiteCanvas extends JPanel {
                 double dx = 0;
                 switch(ke.getKeyCode()) {
                     case KeyEvent.VK_LEFT:
-                        dx = -100;
+                        dx = -25;
                         break;
                     case KeyEvent.VK_RIGHT:
-                        dx = 100;
+                        dx = 25;
                         break;
                     case KeyEvent.VK_UP:
                         changeRopeLength(2);
@@ -149,10 +157,12 @@ public class KiteCanvas extends JPanel {
                         return;
                 }
                 //base.setPos(new Vector2D(base.getPos().x+dx, base.getPos().y));
-                base.setVelocity(new Vector2D(dt*dx, 0));
+                baseLeft.setVelocity(new Vector2D(dt*dx, 0));
+                baseRight.setVelocity(new Vector2D(dt*dx, 0));
             }
             public void keyReleased(KeyEvent ke) {
-                base.setVelocity(new Vector2D(0, 0));
+                baseLeft.setVelocity(new Vector2D(0, 0));
+                baseRight.setVelocity(new Vector2D(0, 0));
             }
         });
     }

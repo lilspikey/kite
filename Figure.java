@@ -48,14 +48,14 @@ public class Figure implements MultiBody<Body2D,Vector2D>, MultiShape {
         rightShoulder = new Body2D(center.x+5, center.y + 5);
         rightHand = new Body2D(center.x+25, center.y + 5);
         
-        rightHip = new Body2D(center.x+8, center.y -24);
-        rightFoot = new Body2D(center.x+8, center.y -50);
+        rightHip = new Body2D(center.x+8, center.y -22);
+        rightFoot = new Body2D(center.x+8, center.y -48);
         
         leftShoulder = new Body2D(center.x-8, center.y + 5);
         leftHand = new Body2D(center.x-28, center.y + 5);
         
-        leftHip = new Body2D(center.x-8, center.y -24);
-        leftFoot = new Body2D(center.x-8, center.y -50);
+        leftHip = new Body2D(center.x-8, center.y -22);
+        leftFoot = new Body2D(center.x-8, center.y -48);
         
         bodies = Arrays.asList(new Body2D[]{ top, bottom, rightShoulder, rightHand, rightHip, rightFoot, leftShoulder, leftHand, leftHip, leftFoot });
         
