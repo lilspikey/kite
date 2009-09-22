@@ -28,6 +28,12 @@ public class Scene {
         l.add(shape);
     }
     
+    public void add(MultiShape multiShape, int layer) {
+        for ( Shape shape: multiShape.getShapes() ) {
+            add(shape, layer);
+        }
+    }
+    
     public void addLayerStyle(LayerStyle style, int layer) {
         Layer l = getOrCreateLayer(layer);
         l.addLayerStyle(style);

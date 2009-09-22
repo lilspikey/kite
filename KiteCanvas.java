@@ -66,7 +66,7 @@ public class KiteCanvas extends JPanel {
         base.setImmovable();
         space.add(base);
         
-        figure = new Figure(base.getPos().add(new Vector2D(0, 30)));
+        figure = new Figure(base.getPos().add(new Vector2D(0, 50)));
         space.add(figure);
         space.add(new StickConstraint<Body2D, Vector2D>(base, figure.getBottom()));
         
@@ -119,18 +119,7 @@ public class KiteCanvas extends JPanel {
             scene.add(rope, SCENE_MIDDLEGROUND);
         }
         
-        BufferedImage rightArmShapeImg = ImageIO.read(getClass().getResource("/images/figure-arm-right.png"));
-        rightArmShape = new PhysicsShape(rightArmShapeImg, figure.getRightShoulder(), figure.getRightHand());
-        scene.add(rightArmShape, SCENE_MIDDLEGROUND);
-        
-        
-        BufferedImage leftArmShapeImg = ImageIO.read(getClass().getResource("/images/figure-arm-left.png"));
-        leftArmShape = new PhysicsShape(leftArmShapeImg, figure.getLeftShoulder(), figure.getLeftHand());
-        scene.add(leftArmShape, SCENE_MIDDLEGROUND);
-        
-        BufferedImage figBodyImg = ImageIO.read(getClass().getResource("/images/figure-body.png"));
-        figureShape = new PhysicsShape(figBodyImg, figure.getTop(), figure.getBottom());
-        scene.add(figureShape, SCENE_MIDDLEGROUND);
+        scene.add(figure, SCENE_MIDDLEGROUND);
         
         BufferedImage skyImg = ImageIO.read(getClass().getResource("/images/sky.jpg"));
         scene.setBackground(skyImg, SCENE_BACKGROUND);
