@@ -94,4 +94,8 @@ public class RopeShape implements Shape {
         points.add(p);
     }
     
+    public boolean contains(int x, int y) {
+        return false;
+    }
+    
 }
