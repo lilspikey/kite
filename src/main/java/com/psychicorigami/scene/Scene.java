@@ -34,6 +34,16 @@ public class Scene {
         }
     }
     
+    public Shape findShapeAt(int x, int y) {
+        for ( int i = layers.size()-1; i >= 0; i-- ) {
+            Shape shape = layers.get(i).findShapeAt(x, y);
+            if ( shape != null ) {
+                return shape;
+            }
+        }
+        return null;
+    }
+    
     public void addLayerStyle(LayerStyle style, int layer) {
         Layer l = getOrCreateLayer(layer);
         l.addLayerStyle(style);

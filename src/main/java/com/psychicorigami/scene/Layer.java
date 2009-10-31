@@ -72,6 +72,19 @@ public class Layer {
         }
     }
     
+    /**
+     * Find the shape that contains the point (x,y) or null if there is no shape
+     * under the point
+     **/
+    public Shape findShapeAt(int x, int y) {
+        for ( Shape shape: shapes ) {
+            if ( shape.contains(x, y) ) {
+                return shape;
+            }
+        }
+        return null;
+    }
+    
     private BufferedImage clearBacking() {
         Graphics2D gb = backing.createGraphics();
 
