@@ -22,11 +22,7 @@ public abstract class AbstractShape implements Shape {
     
     public void paint(Graphics2D g) {
         AffineTransform original = g.getTransform();
-        AffineTransform tx = new AffineTransform();
-
-        tx.translate(x, y);
-        // Math.atan2(angle.y, angle.x)
-        tx.rotate(angle - Math.PI/2);
+        AffineTransform tx = createTransform();
         
         g.transform(tx);
         
@@ -34,6 +30,19 @@ public abstract class AbstractShape implements Shape {
         
         if ( original != null )
             g.setTransform(original);
+    }
+    
+    /**
+     * create affine transform needed to render this shape at correct
+     * position and angle
+     **/
+    public AffineTransform createTransform() {
+        AffineTransform tx = new AffineTransform();
+
+        tx.translate(x, y);
+        tx.rotate(angle - Math.PI/2);
+        
+        return tx;
     }
     
     public abstract void paintShape(Graphics2D g);

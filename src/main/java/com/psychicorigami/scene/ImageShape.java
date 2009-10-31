@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 
 public class ImageShape extends AbstractShape {
@@ -27,6 +28,12 @@ public class ImageShape extends AbstractShape {
     }
     
     public void paintShape(Graphics2D g) {
+        AffineTransform tx = createCentreImageTransform();
+        
+        g.drawRenderedImage(image, tx);
+    }
+    
+    public AffineTransform createCentreImageTransform() {
         double width  = image.getWidth();
         double height = image.getHeight();
         
@@ -34,25 +41,25 @@ public class ImageShape extends AbstractShape {
         tx.scale(1,-1);
         tx.translate(-(width/2.0), -(height/2.0));
         
-        g.drawRenderedImage(image, tx);
+        return tx;
     }
     
     public boolean contains(int x, int y) {
-        double width  = image.getWidth();
-        double height = image.getHeight();
+        try {
+            double width  = image.getWidth();
+            double height = image.getHeight();
         
-        AffineTransform tx = new AffineTransform();
+            AffineTransform tx = createTransform();
+            tx.concatenate(createCentreImageTransform());
         
-        tx.translate(-getX(), -getY());
-        tx.rotate(-(getAngle() - Math.PI/2));
-        tx.scale(1,-1);
-        tx.translate((width/2.0), (height/2.0));
+            // transform point into same space as rectangle
+            Point2D p = tx.inverseTransform(new Point2D.Double(x, y), null);
         
-        // transform point into same space as rectangle
-        Point2D p = tx.transform(new Point2D.Double(x, y), null);
-        
-        
-        return new Rectangle2D.Double(0, 0, width, height).contains(p);
+            return new Rectangle2D.Double(0, 0, width, height).contains(p);
+        }
+        catch(NoninvertibleTransformException nte) {
+            throw new RuntimeException(nte);
+        }
     }
     
 }
