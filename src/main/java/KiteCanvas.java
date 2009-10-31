@@ -136,6 +136,9 @@ public class KiteCanvas extends JPanel {
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent me) {
                 requestFocus();
+                AffineTransform tx = createTransform();
+                Point2D p = tx.transform(me.getPoint(), null);
+                System.out.println(scene.findShapeAt((int)p.getX(), (int)p.getY()));
             }
         });
         
@@ -243,6 +246,12 @@ public class KiteCanvas extends JPanel {
         layerTint.setOpacity(opacity);
     }
     
+    public AffineTransform createTransform() {
+        AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
+        tx.translate(0, -getHeight());
+        return tx;
+    }
+    
     @Override
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
@@ -251,8 +260,7 @@ public class KiteCanvas extends JPanel {
         int height = getHeight();
         g2d.clearRect(0, 0, getWidth(), height);
         
-        AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
-        tx.translate(0, -getHeight());
+        AffineTransform tx = createTransform();
         g2d.transform(tx);
         
         scene.paint(g2d);
