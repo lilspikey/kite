@@ -48,7 +48,9 @@ public class KiteCanvas extends JPanel {
     
     private Vector2D force = new Vector2D();
     
-    private Point2D currentMousePos = new Point2D.Double(0, 0);
+    private Vector2D currentMousePos = new Vector2D(0, 0);
+    private PhysicsShape currentShapeAtMousePos = null;
+    private PhysicsShape dragShape    = null;
     
     public KiteCanvas() throws IOException {
         
@@ -139,12 +141,22 @@ public class KiteCanvas extends JPanel {
             public void mousePressed(MouseEvent me) {
                 requestFocus();
                 updateMousePosition(me);
+                dragShape = currentShapeAtMousePos;
             }
         });
         
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseMoved(MouseEvent me) {
                 updateMousePosition(me);
+            }
+            
+            public void mouseDragged(MouseEvent me) {
+                if ( dragShape != null ) {
+                    Vector2D v = transformedPosition(me);
+                    Vector2D d = v.subtract(currentMousePos);
+                    System.out.println(d);
+                    currentMousePos = v;
+                }
             }
         });
         
@@ -176,18 +188,25 @@ public class KiteCanvas extends JPanel {
         });
     }
     
-    public void updateMousePosition(MouseEvent me) {
+    public Vector2D transformedPosition(MouseEvent me) {
         AffineTransform tx = createTransform();
-        currentMousePos = tx.transform(me.getPoint(), null);
+        Point2D p = tx.transform(me.getPoint(), null);
+        return new Vector2D(p.getX(), p.getY());
+    }
+    
+    public void updateMousePosition(MouseEvent me) {
+        currentMousePos = transformedPosition(me);
         updateCursor();
     }
     
     private void updateCursor() {
-        com.psychicorigami.scene.Shape shape = scene.findShapeAt((int)currentMousePos.getX(), (int)currentMousePos.getY());
-        if ( shape != null ) {
+        com.psychicorigami.scene.Shape shape = scene.findShapeAt((int)currentMousePos.x, (int)currentMousePos.y);
+        if ( shape != null && (shape instanceof PhysicsShape) ) {
+            currentShapeAtMousePos = (PhysicsShape)shape;
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
         else {
+            currentShapeAtMousePos = null;
             setCursor(null);
         }
     }
