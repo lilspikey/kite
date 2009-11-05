@@ -48,6 +48,8 @@ public class KiteCanvas extends JPanel {
     
     private Vector2D force = new Vector2D();
     
+    private Point2D currentMousePos = new Point2D.Double(0, 0);
+    
     public KiteCanvas() throws IOException {
         
         scene.addLayerStyle(new DropShadowLayerStyle(), SCENE_MIDDLEGROUND);
@@ -136,9 +138,13 @@ public class KiteCanvas extends JPanel {
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent me) {
                 requestFocus();
-                AffineTransform tx = createTransform();
-                Point2D p = tx.transform(me.getPoint(), null);
-                System.out.println(scene.findShapeAt((int)p.getX(), (int)p.getY()));
+                updateMousePosition(me);
+            }
+        });
+        
+        addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseMoved(MouseEvent me) {
+                updateMousePosition(me);
             }
         });
         
@@ -170,6 +176,22 @@ public class KiteCanvas extends JPanel {
         });
     }
     
+    public void updateMousePosition(MouseEvent me) {
+        AffineTransform tx = createTransform();
+        currentMousePos = tx.transform(me.getPoint(), null);
+        updateCursor();
+    }
+    
+    private void updateCursor() {
+        com.psychicorigami.scene.Shape shape = scene.findShapeAt((int)currentMousePos.getX(), (int)currentMousePos.getY());
+        if ( shape != null ) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+        else {
+            setCursor(null);
+        }
+    }
+    
     public void changeRopeLength(double dx) {
         double length = mainRope.calcLength();
         mainRope.changeLength(length + dx);
@@ -181,50 +203,11 @@ public class KiteCanvas extends JPanel {
             space.update(dt);
         }
         updateScene();
+        updateCursor();
         repaint();
     }
     
     public void applyForces() {
-       /* Vector2D wind = new Vector2D(windStrength, 0);
-        Vector2D crossBar = kite.get(1).getPos().subtract( kite.get(3).getPos() ).unit();
-        
-        Vector2D force = crossBar.multiply(crossBar.dotProduct(wind));
-        
-        // factor in a bit of drag (speed versus the wind)
-        Vector2D speed = new Vector2D();
-        for ( Body2D b: kite ) {
-            Vector2D v = b.getVelocity().divide(dt);
-            speed = speed.add(v);
-        }
-        
-        speed = speed.divide(kite.size());
-        
-        force = force.subtract(speed);
-        
-        for ( Body2D b: kite ) {
-            b.applyForce(force);
-        }
-        
-        this.force = force;*/
-        
-        /*Vector2D crossBar = kite.get(1).getPos().subtract( kite.get(3).getPos() ).unit();
-        
-        Vector2D airSpeed = new Vector2D();
-        for ( Body2D b: kite ) {
-            Vector2D v = b.getVelocity().divide(dt);
-            airSpeed = airSpeed.add(v);
-        }
-        
-        airSpeed = airSpeed.divide(-kite.size());
-        
-        airSpeed = airSpeed.add(new Vector2D(WIND_SPEED, 0));
-        
-        Vector2D force = crossBar.multiply(crossBar.dotProduct(airSpeed)).multiply(AIR_RESISTANCE);
-        
-        for ( Body2D b: kite ) {
-            b.applyForce(force);
-        }*/
-        
         kite.applyWindForce(new Vector2D(WIND_SPEED, 0), dt);
     }
     
