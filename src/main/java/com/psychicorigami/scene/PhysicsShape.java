@@ -31,6 +31,14 @@ public class PhysicsShape extends ImageShape {
         return Math.atan2(angle.y, angle.x);
     }
     
+    public Body2D getBody1() {
+        return b1;
+    }
+    
+    public Body2D getBody2() {
+        return b2;
+    }
+    
     public void update() {
         Vector2D pos = calcPosition(b1, b2);
         double angle = calcAngle(b1, b2);

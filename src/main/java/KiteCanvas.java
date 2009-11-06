@@ -15,6 +15,7 @@ import com.psychicorigami.scene.RopeShape;
 import com.psychicorigami.scene.Scene;
 import com.psychicorigami.scene.ColoriseLayerStyle;
 import com.psychicorigami.scene.DropShadowLayerStyle;
+import com.psychicorigami.scene.PhysicsShapeDragger;
 
 public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
@@ -48,6 +49,7 @@ public class KiteCanvas extends JPanel {
     
     private Vector2D force = new Vector2D();
     
+    private PhysicsShapeDragger dragger = new PhysicsShapeDragger();
     private Vector2D currentMousePos = new Vector2D(0, 0);
     private PhysicsShape currentShapeAtMousePos = null;
     private PhysicsShape dragShape    = null;
@@ -68,11 +70,13 @@ public class KiteCanvas extends JPanel {
         space.addGlobalConstraint(new FloorConstraint());
         
         baseLeft = new Body2D(-10, 55);
-        baseLeft.setImmovable();
+        baseLeft.setMass(100);
+        //baseLeft.setImmovable();
         space.add(baseLeft);
         
         baseRight = new Body2D(10, 55);
-        baseRight.setImmovable();
+        baseRight.setMass(100);
+        //baseRight.setImmovable();
         space.add(baseRight);
         
         figure = new Figure(new Vector2D(0, 50));
@@ -118,6 +122,8 @@ public class KiteCanvas extends JPanel {
         space.add(new RopeConstraint<Body2D, Vector2D>(joint, bottomRope.getStart()));
         space.add(new RopeConstraint<Body2D, Vector2D>(kite.getBottomHook(), bottomRope.getEnd()));
         
+        space.add(dragger);
+        
         // add a tail
         BufferedImage kiteImg = ImageIO.read(getClass().getResource("/images/kite.png"));
         
@@ -140,23 +146,23 @@ public class KiteCanvas extends JPanel {
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent me) {
                 requestFocus();
-                updateMousePosition(me);
-                dragShape = currentShapeAtMousePos;
+                updateMousePosition(me, true);
+            }
+            
+            public void mouseReleased(MouseEvent me) {
+                dragger.stopDragging();
             }
         });
         
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseMoved(MouseEvent me) {
-                updateMousePosition(me);
+                updateMousePosition(me, false);
             }
             
             public void mouseDragged(MouseEvent me) {
-                if ( dragShape != null ) {
-                    Vector2D v = transformedPosition(me);
-                    Vector2D d = v.subtract(currentMousePos);
-                    System.out.println(d);
-                    currentMousePos = v;
-                }
+                Vector2D v = transformedPosition(me);
+                dragger.updateMousePos(v);
+                currentMousePos = v;
             }
         });
         
@@ -194,9 +200,12 @@ public class KiteCanvas extends JPanel {
         return new Vector2D(p.getX(), p.getY());
     }
     
-    public void updateMousePosition(MouseEvent me) {
+    public void updateMousePosition(MouseEvent me, boolean pressed) {
         currentMousePos = transformedPosition(me);
         updateCursor();
+        if ( pressed && currentShapeAtMousePos != null ) {
+            dragger.dragShape(currentShapeAtMousePos, currentMousePos);
+        }
     }
     
     private void updateCursor() {
