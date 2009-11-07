@@ -8,7 +8,7 @@ import com.psychicorigami.physics.Constraint;
 import java.util.List;
 import java.util.ArrayList;
 
-public class PhysicsShapeDragger implements Constraint {
+public class PhysicsShapeDragger /*implements Constraint*/ {
     private MultiBody<Body2D, Vector2D> body = null;
     private List<Vector2D> distances = null;
     private Vector2D mousePos  = null;
@@ -33,23 +33,37 @@ public class PhysicsShapeDragger implements Constraint {
         this.mousePos = null;
     }
     
+    public boolean isDragging() {
+        return this.body != null && this.mousePos != null;
+    }
+    
     public void updateMousePos(Vector2D pos) {
         this.mousePos = pos;
     }
     
-    private void moveBody(Body2D body, Vector2D d) {
-        Vector2D target = mousePos.add(d);
-        body.addConstrainedPosition(target);
+    private void applyForceToBody(Body2D body, Vector2D d) {
+        if ( !body.isImmovable() ) {
+            Vector2D target = mousePos.add(d);
+            Vector2D diff = target.subtract(body.getPos());
+            double length = diff.length();
+            if ( length > 0 ) {
+                //System.out.println(diff);
+                Vector2D force = diff.divide(length*body.getMassInv()).multiply(75);
+                //System.out.println(force.length());
+                body.applyForce(force);
+                //body.addConstrainedPosition(target);
+            }
+        }
     }
     
-    public double constrain() {
+    public void update() {
         if ( body != null && mousePos != null ) {
             List<Body2D> bodies = body.getBodies();
             for ( int i = 0; i < bodies.size(); i++ ) {
-                moveBody(bodies.get(i), distances.get(i));
+                applyForceToBody(bodies.get(i), distances.get(i));
             }
         }
-        return 0;
+        //return 0;
     }
     
 }

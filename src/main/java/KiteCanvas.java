@@ -119,7 +119,7 @@ public class KiteCanvas extends JPanel {
         space.add(new RopeConstraint<Body2D, Vector2D>(joint, bottomRope.getStart()));
         space.add(new RopeConstraint<Body2D, Vector2D>(kite.getBottomHook(), bottomRope.getEnd()));
         
-        space.add(dragger);
+        //space.add(dragger);
         
         // add a tail
         BufferedImage kiteImg = ImageIO.read(getClass().getResource("/images/kite.png"));
@@ -219,8 +219,10 @@ public class KiteCanvas extends JPanel {
     
     private void updateCursor() {
         com.psychicorigami.scene.Shape shape = scene.findShapeAt((int)currentMousePos.x, (int)currentMousePos.y);
-        if ( shape != null && (shape instanceof PhysicsShape) ) {
-            currentShapeAtMousePos = (PhysicsShape)shape;
+        if ( (shape != null && (shape instanceof PhysicsShape)) || dragger.isDragging() ) {
+            if ( shape != null ) {
+                currentShapeAtMousePos = (PhysicsShape)shape;
+            }
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
         else {
@@ -246,6 +248,7 @@ public class KiteCanvas extends JPanel {
     
     public void applyForces() {
         kite.applyWindForce(new Vector2D(WIND_SPEED, 0), dt);
+        dragger.update();
     }
     
     public void updateScene() {

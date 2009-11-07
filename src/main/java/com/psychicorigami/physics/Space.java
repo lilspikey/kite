@@ -107,7 +107,7 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
             error = applyConstraints();
             count++;
         }
-        while( count < 5 || (error > 0.25 && count < 200) );
+        while( count < 10 || (error > 1 && count < 200) );
     }
     
 }

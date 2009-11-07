@@ -57,8 +57,8 @@ public class Figure implements MultiBody<Body2D,Vector2D>, MultiShape {
         leftHip = new Body2D(center.x-8, center.y -22);
         leftFoot = new Body2D(center.x-9, center.y -48);
         
-        leftFoot.setMass(400);
-        rightFoot.setMass(400);
+        leftFoot.setMass(800);
+        rightFoot.setMass(800);
         
         bodies = Arrays.asList(new Body2D[]{ top, bottom, rightShoulder, rightHand, rightHip, rightFoot, leftShoulder, leftHand, leftHip, leftFoot });
         
