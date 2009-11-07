@@ -10,7 +10,7 @@ public class FloorConstraint extends GlobalConstraint<Body2D,Vector2D> {
         Vector2D pos = b.getPos();
         if ( pos.y < 0 ) {
             double error = Math.abs(pos.y);
-            b.setPos( new Vector2D(pos.x, 0) );
+            b.addConstrainedPosition( new Vector2D(pos.x, 0) );
             
             // handle friction
             Vector2D velocity = b.getVelocity();

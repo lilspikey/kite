@@ -49,13 +49,16 @@ public class Figure implements MultiBody<Body2D,Vector2D>, MultiShape {
         rightHand = new Body2D(center.x+25, center.y + 5);
         
         rightHip = new Body2D(center.x+8, center.y -22);
-        rightFoot = new Body2D(center.x+8, center.y -48);
+        rightFoot = new Body2D(center.x+9, center.y -48);
         
         leftShoulder = new Body2D(center.x-8, center.y + 5);
         leftHand = new Body2D(center.x-28, center.y + 5);
         
         leftHip = new Body2D(center.x-8, center.y -22);
-        leftFoot = new Body2D(center.x-8, center.y -48);
+        leftFoot = new Body2D(center.x-9, center.y -48);
+        
+        leftFoot.setMass(400);
+        rightFoot.setMass(400);
         
         bodies = Arrays.asList(new Body2D[]{ top, bottom, rightShoulder, rightHand, rightHip, rightFoot, leftShoulder, leftHand, leftHip, leftFoot });
         
@@ -70,9 +73,11 @@ public class Figure implements MultiBody<Body2D,Vector2D>, MultiShape {
             new StickConstraint<Body2D, Vector2D>(bottom, rightHip),
             new StickConstraint<Body2D, Vector2D>(top, rightHip),
             new StickConstraint<Body2D, Vector2D>(rightHip, rightFoot),
+            new StickConstraint<Body2D, Vector2D>(rightHip, leftFoot),
             new StickConstraint<Body2D, Vector2D>(bottom, leftHip),
             new StickConstraint<Body2D, Vector2D>(top, leftHip),
-            new StickConstraint<Body2D, Vector2D>(leftHip, leftFoot)
+            new StickConstraint<Body2D, Vector2D>(leftHip, leftFoot),
+            new StickConstraint<Body2D, Vector2D>(leftHip, rightFoot)
         };
         this.constraints = Arrays.asList(constraints);
         

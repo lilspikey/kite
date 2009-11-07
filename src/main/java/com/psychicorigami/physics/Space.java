@@ -55,6 +55,11 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
                 error = cerror;
             }
         }
+        
+        for ( B body: bodies ) {
+            body.updatePositionFromConstraints();
+        }
+        
         return error;
     }
     

@@ -69,7 +69,7 @@ public class KiteCanvas extends JPanel {
         space.setGravity( new Vector2D(0, -10) );
         space.addGlobalConstraint(new FloorConstraint());
         
-        baseLeft = new Body2D(-10, 55);
+        /*baseLeft = new Body2D(-10, 55);
         baseLeft.setMass(100);
         //baseLeft.setImmovable();
         space.add(baseLeft);
@@ -77,12 +77,12 @@ public class KiteCanvas extends JPanel {
         baseRight = new Body2D(10, 55);
         baseRight.setMass(100);
         //baseRight.setImmovable();
-        space.add(baseRight);
+        space.add(baseRight);*/
         
         figure = new Figure(new Vector2D(0, 50));
         space.add(figure);
-        space.add(new StickConstraint<Body2D, Vector2D>(baseLeft, figure.getLeftShoulder()));
-        space.add(new StickConstraint<Body2D, Vector2D>(baseRight, figure.getRightShoulder()));
+        //space.add(new StickConstraint<Body2D, Vector2D>(baseLeft, figure.getLeftShoulder()));
+        //space.add(new StickConstraint<Body2D, Vector2D>(baseRight, figure.getRightShoulder()));
         //space.add(new RopeConstraint<Body2D, Vector2D>(baseRight, figure.getLeftShoulder()));
         //space.add(new RopeConstraint<Body2D, Vector2D>(baseLeft, figure.getRightShoulder()));
         
@@ -184,12 +184,12 @@ public class KiteCanvas extends JPanel {
                         return;
                 }
                 //base.setPos(new Vector2D(base.getPos().x+dx, base.getPos().y));
-                baseLeft.setVelocity(new Vector2D(dt*dx, 0));
-                baseRight.setVelocity(new Vector2D(dt*dx, 0));
+                //baseLeft.setVelocity(new Vector2D(dt*dx, 0));
+                //baseRight.setVelocity(new Vector2D(dt*dx, 0));
             }
             public void keyReleased(KeyEvent ke) {
-                baseLeft.setVelocity(new Vector2D(0, 0));
-                baseRight.setVelocity(new Vector2D(0, 0));
+                //baseLeft.setVelocity(new Vector2D(0, 0));
+                //baseRight.setVelocity(new Vector2D(0, 0));
             }
         });
     }
@@ -226,7 +226,7 @@ public class KiteCanvas extends JPanel {
     }
     
     public void tick() {
-        for ( int i = 0; i < 5*updateCount; i++ ) {
+        for ( int i = 0; i < 10*updateCount; i++ ) {
             applyForces();
             space.update(dt);
         }

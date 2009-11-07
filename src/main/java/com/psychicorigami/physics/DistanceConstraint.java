@@ -43,8 +43,8 @@ public abstract class DistanceConstraint<B extends Body<V>, V extends Vector<V>>
         p1 = delta.multiply_add(  invM1*diff, p1);
         p2 = delta.multiply_add( -invM2*diff, p2);
         
-        b1.setPos(p1);
-        b2.setPos(p2);
+        b1.addConstrainedPosition(p1);
+        b2.addConstrainedPosition(p2);
         
         return error;
     }

@@ -26,10 +26,15 @@ public class PhysicsShapeDragger implements Constraint {
         this.mousePos = pos;
     }
     
+    private void moveBody(Body2D body, Vector2D d) {
+        Vector2D target = mousePos.add(d);
+        body.addConstrainedPosition(target);
+    }
+    
     public double constrain() {
         if ( shape != null && mousePos != null ) {
-            shape.getBody1().setPos(mousePos.add(d1));
-            shape.getBody2().setPos(mousePos.add(d2));
+            moveBody(shape.getBody1(), d1);
+            moveBody(shape.getBody2(), d2);            
         }
         return 0;
     }
