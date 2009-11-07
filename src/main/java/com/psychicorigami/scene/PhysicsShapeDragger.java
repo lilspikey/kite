@@ -13,8 +13,8 @@ public class PhysicsShapeDragger implements Constraint {
     public void dragShape(PhysicsShape shape, Vector2D mousePos) {
         this.shape    = shape;
         this.mousePos = mousePos;
-        this.d1 = mousePos.subtract(shape.getBody1().getPos());
-        this.d2 = mousePos.subtract(shape.getBody2().getPos());
+        this.d1 = shape.getBody1().getPos().subtract(mousePos);
+        this.d2 = shape.getBody2().getPos().subtract(mousePos);
     }
     
     public void stopDragging() {
