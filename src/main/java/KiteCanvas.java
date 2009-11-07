@@ -33,9 +33,6 @@ public class KiteCanvas extends JPanel {
     private ArrayList<Rope2D> kiteRopes = new ArrayList<Rope2D>();
     
     private Figure figure = null;
-    private PhysicsShape figureShape = null;
-    private PhysicsShape rightArmShape = null;
-    private PhysicsShape leftArmShape = null;
     
     private Body2D baseLeft = null;
     private Body2D baseRight = null;
@@ -200,11 +197,23 @@ public class KiteCanvas extends JPanel {
         return new Vector2D(p.getX(), p.getY());
     }
     
+    public MultiBody<Body2D, Vector2D> findMatchingBody(PhysicsShape shape) {
+        if ( shape == kiteShape ) {
+            return kite;
+        }
+        else {
+            if ( figure.getShapes().contains(shape) ) {
+                return figure;
+            }
+        }
+        return null;
+    }
+    
     public void updateMousePosition(MouseEvent me, boolean pressed) {
         currentMousePos = transformedPosition(me);
         updateCursor();
         if ( pressed && currentShapeAtMousePos != null ) {
-            dragger.dragShape(currentShapeAtMousePos, currentMousePos);
+            dragger.dragShape(findMatchingBody(currentShapeAtMousePos), currentMousePos);
         }
     }
     

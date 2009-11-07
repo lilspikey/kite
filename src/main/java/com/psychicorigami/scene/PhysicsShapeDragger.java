@@ -2,23 +2,34 @@ package com.psychicorigami.scene;
 
 import com.psychicorigami.physics.Vector2D;
 import com.psychicorigami.physics.Body2D;
+import com.psychicorigami.physics.MultiBody;
 import com.psychicorigami.physics.Constraint;
 
+import java.util.List;
+import java.util.ArrayList;
 
 public class PhysicsShapeDragger implements Constraint {
-    private PhysicsShape shape = null;
-    private Vector2D d1, d2;
+    private MultiBody<Body2D, Vector2D> body = null;
+    private List<Vector2D> distances = null;
     private Vector2D mousePos  = null;
     
-    public void dragShape(PhysicsShape shape, Vector2D mousePos) {
-        this.shape    = shape;
+    public void dragShape(MultiBody<Body2D, Vector2D> body, Vector2D mousePos) {
+        if ( body == null ) {
+            stopDragging();
+            return;
+        }
+        
+        this.body     = body;
         this.mousePos = mousePos;
-        this.d1 = shape.getBody1().getPos().subtract(mousePos);
-        this.d2 = shape.getBody2().getPos().subtract(mousePos);
+        this.distances = new ArrayList<Vector2D>();
+        for ( Body2D b: body.getBodies() ) {
+            Vector2D d = b.getPos().subtract(mousePos);
+            this.distances.add(d);
+        }
     }
     
     public void stopDragging() {
-        this.shape    = null;
+        this.body    = null;
         this.mousePos = null;
     }
     
@@ -32,9 +43,11 @@ public class PhysicsShapeDragger implements Constraint {
     }
     
     public double constrain() {
-        if ( shape != null && mousePos != null ) {
-            moveBody(shape.getBody1(), d1);
-            moveBody(shape.getBody2(), d2);            
+        if ( body != null && mousePos != null ) {
+            List<Body2D> bodies = body.getBodies();
+            for ( int i = 0; i < bodies.size(); i++ ) {
+                moveBody(bodies.get(i), distances.get(i));
+            }
         }
         return 0;
     }
