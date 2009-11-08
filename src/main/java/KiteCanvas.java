@@ -51,6 +51,8 @@ public class KiteCanvas extends JPanel {
     private PhysicsShape currentShapeAtMousePos = null;
     private PhysicsShape dragShape    = null;
     
+    private GravityForce<Body2D, Vector2D> gravity = new GravityForce<Body2D, Vector2D>(new Vector2D(0, -10));
+    
     public KiteCanvas() throws IOException {
         
         scene.addLayerStyle(new DropShadowLayerStyle(), SCENE_MIDDLEGROUND);
@@ -63,30 +65,20 @@ public class KiteCanvas extends JPanel {
             }
         });
         
-        space.setGravity( new Vector2D(0, -10) );
         space.addGlobalConstraint(new FloorConstraint());
-        
-        /*baseLeft = new Body2D(-10, 55);
-        baseLeft.setMass(100);
-        //baseLeft.setImmovable();
-        space.add(baseLeft);
-        
-        baseRight = new Body2D(10, 55);
-        baseRight.setMass(100);
-        //baseRight.setImmovable();
-        space.add(baseRight);*/
+        space.add(gravity);
         
         figure = new Figure(new Vector2D(0, 50));
         space.add(figure);
-        //space.add(new StickConstraint<Body2D, Vector2D>(baseLeft, figure.getLeftShoulder()));
-        //space.add(new StickConstraint<Body2D, Vector2D>(baseRight, figure.getRightShoulder()));
-        //space.add(new RopeConstraint<Body2D, Vector2D>(baseRight, figure.getLeftShoulder()));
-        //space.add(new RopeConstraint<Body2D, Vector2D>(baseLeft, figure.getRightShoulder()));
+        
+        gravity.add(figure);
         
         Body2D hand = figure.getRightHand();
         
         mainRope = new Rope2D(new Vector2D(hand.getPos().x+0.01, hand.getPos().y), new Vector2D(300, 70), 10, rope_weight);
         space.add(mainRope);
+        gravity.add(mainRope);
+        
         kiteRopes.add(mainRope);
         
         space.add(new RopeConstraint<Body2D, Vector2D>(hand, mainRope.getStart()));
@@ -98,6 +90,7 @@ public class KiteCanvas extends JPanel {
         kite.setInitialVelocity(new Vector2D(0, KITE_INITIAL_SPEED), dt);
         
         space.add(kite);
+        gravity.add(kite);
         space.add(kite.createWindForce(new Vector2D(WIND_SPEED, 0)));
         
         // now add rigging
@@ -113,6 +106,9 @@ public class KiteCanvas extends JPanel {
         
         space.add(bottomRope);
         kiteRopes.add(bottomRope);
+        
+        gravity.add(topRope);
+        gravity.add(bottomRope);
         
         space.add(new RopeConstraint<Body2D, Vector2D>(joint, topRope.getStart()));
         space.add(new RopeConstraint<Body2D, Vector2D>(kite.getTopHook(), topRope.getEnd()));

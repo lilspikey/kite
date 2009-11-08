@@ -13,16 +13,6 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
     private List<GlobalConstraint<B,V>> globalConstraints = new ArrayList<GlobalConstraint<B,V>>();
     private List<Force> forces = new ArrayList<Force>();
     
-    private V gravity = null;
-    
-    public V getGravity() {
-        return gravity;
-    }
-    
-    public void setGravity(V gravity) {
-        this.gravity = gravity;
-    }
-    
     public void add(B body) {
         bodies.add(body);
         for ( GlobalConstraint<B,V> gc: globalConstraints ) {
@@ -88,9 +78,6 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
     
     public void integrate(double dt) {
         for ( B b: bodies ) {
-            if ( gravity != null && !b.isImmovable() ) {
-                b.applyForce(gravity.divide(b.getMassInv()));
-            }
             integrate(b, dt);
         }
     }
