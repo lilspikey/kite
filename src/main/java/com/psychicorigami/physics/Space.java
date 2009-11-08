@@ -80,9 +80,9 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         }
     }
     
-    public void updateForces() {
+    public void updateForces(double dt) {
         for ( Force force: forces ) {
-            force.update();
+            force.update(dt);
         }
     }
     
@@ -115,7 +115,7 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
     }
     
     public void update(double dt) {
-        updateForces();
+        updateForces(dt);
         integrate(dt);
         double error = 0;
         int count = 0;

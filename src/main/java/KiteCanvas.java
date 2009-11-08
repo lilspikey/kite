@@ -98,6 +98,7 @@ public class KiteCanvas extends JPanel {
         kite.setInitialVelocity(new Vector2D(0, KITE_INITIAL_SPEED), dt);
         
         space.add(kite);
+        space.add(kite.createWindForce(new Vector2D(WIND_SPEED, 0)));
         
         // now add rigging
         Rope2D topRope = new Rope2D(joint.getPos().add(new Vector2D(0.01,0.01)),
@@ -238,16 +239,11 @@ public class KiteCanvas extends JPanel {
     
     public void tick() {
         for ( int i = 0; i < 10*updateCount; i++ ) {
-            applyForces();
             space.update(dt);
         }
         updateScene();
         updateCursor();
         repaint();
-    }
-    
-    public void applyForces() {
-        kite.applyWindForce(new Vector2D(WIND_SPEED, 0), dt);
     }
     
     public void updateScene() {

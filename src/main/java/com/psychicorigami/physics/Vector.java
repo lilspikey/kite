@@ -16,5 +16,7 @@ public interface Vector<V extends Vector> {
     
     public V zero();
     
+    public V unit();
+    
     public double dotProduct(V v);
 }

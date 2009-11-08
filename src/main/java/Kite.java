@@ -3,6 +3,10 @@ import com.psychicorigami.physics.Body2D;
 import com.psychicorigami.physics.Vector2D;
 import com.psychicorigami.physics.Constraint;
 import com.psychicorigami.physics.StickConstraint;
+import com.psychicorigami.physics.WindForce;
+import com.psychicorigami.physics.VectorTangentVariable;
+
+import static com.psychicorigami.variable.ConstVariable.const_var;
 
 import java.util.List;
 import java.util.Arrays;
@@ -97,6 +101,10 @@ public class Kite implements MultiBody<Body2D,Vector2D> {
         Vector2D angle = p1.subtract(p2).unit();
     
         return Math.atan2(angle.y, angle.x);
+    }
+    
+    public WindForce createWindForce(Vector2D windForce) {
+        return new WindForce<Body2D,Vector2D>(centreOfPressure, new VectorTangentVariable<Vector2D>(rightCorner, leftCorner), const_var(windForce));
     }
     
     public void applyWindForce(Vector2D windForce, double dt) {

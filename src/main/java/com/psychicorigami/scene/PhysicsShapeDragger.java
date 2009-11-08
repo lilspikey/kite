@@ -56,7 +56,7 @@ public class PhysicsShapeDragger implements Force {
         }
     }
     
-    public void update() {
+    public void update(double dt) {
         if ( body != null && mousePos != null ) {
             List<Body2D> bodies = body.getBodies();
             for ( int i = 0; i < bodies.size(); i++ ) {
