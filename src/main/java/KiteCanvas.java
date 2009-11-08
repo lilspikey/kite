@@ -17,6 +17,8 @@ import com.psychicorigami.scene.ColoriseLayerStyle;
 import com.psychicorigami.scene.DropShadowLayerStyle;
 import com.psychicorigami.scene.PhysicsShapeDragger;
 
+import com.psychicorigami.variable.Variable;
+
 public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
     private Scene scene = new Scene();
@@ -59,11 +61,19 @@ public class KiteCanvas extends JPanel {
         
         scene.addLayerStyle(new DropShadowLayerStyle(), SCENE_MIDDLEGROUND);
         scene.addLayerStyle(layerTint, SCENE_MIDDLEGROUND);
-        layerTint.setOpacity(1);
         
-        sun = new Sun(new Vector2D(100, 200));
+        sun = new Sun(new Vector2D(300, 300));
         space.add(sun);
         scene.add(sun, SCENE_BACKGROUND);
+        
+        layerTint.setOpacity(new Variable<Float>() {
+            public Float val() {
+                Vector2D pos = sun.getPos();
+                double range = pos.y/150.0;
+                
+                return (float)(1.0 - Math.min(1.0, Math.max(0.0, range)));
+            }
+        });
         
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
@@ -262,11 +272,6 @@ public class KiteCanvas extends JPanel {
             }
         }
         
-        float opacity = layerTint.getOpacity();
-        opacity -= 0.01;
-        if ( opacity < 0 )
-            opacity = 0;
-        layerTint.setOpacity(opacity);
     }
     
     public AffineTransform createTransform() {

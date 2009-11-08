@@ -46,6 +46,10 @@ public class Sun implements MultiBody<Body2D,Vector2D>, MultiShape {
         }
     }
     
+    public Vector2D getPos() {
+        return top.getPos().add( bottom.getPos() ).divide(2);
+    }
+    
     public List<Body2D> getBodies() {
         return bodies;
     }
