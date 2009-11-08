@@ -53,11 +53,17 @@ public class KiteCanvas extends JPanel {
     
     private GravityForce<Body2D, Vector2D> gravity = new GravityForce<Body2D, Vector2D>(new Vector2D(0, -10));
     
+    private Sun sun = null;
+    
     public KiteCanvas() throws IOException {
         
         scene.addLayerStyle(new DropShadowLayerStyle(), SCENE_MIDDLEGROUND);
         scene.addLayerStyle(layerTint, SCENE_MIDDLEGROUND);
         layerTint.setOpacity(1);
+        
+        sun = new Sun(new Vector2D(100, 200));
+        space.add(sun);
+        scene.add(sun, SCENE_BACKGROUND);
         
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
@@ -201,6 +207,9 @@ public class KiteCanvas extends JPanel {
         else {
             if ( figure.getShapes().contains(shape) ) {
                 return figure;
+            }
+            else if ( sun.getShapes().contains(shape) ) {
+                return sun;
             }
         }
         return null;
