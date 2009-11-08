@@ -3,9 +3,11 @@ package com.psychicorigami.physics;
 import java.util.List;
 import java.util.ArrayList;
 
+import com.psychicorigami.variable.Variable;
+import static com.psychicorigami.variable.ConstVariable.const_var;
 
 public abstract class Space<B extends Body<V>, V extends Vector<V>> {
-    private static final double DAMPING = 0.005;
+    private Variable<Double> damping = const_var(0.005);
     private List<B> bodies = new ArrayList<B>();
     private List<Constraint> constraints = new ArrayList<Constraint>();
     private List<GlobalConstraint<B,V>> globalConstraints = new ArrayList<GlobalConstraint<B,V>>();
@@ -86,6 +88,8 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
      * integrate using verlet method
      **/
     public void integrate(B body, double dt) {
+        double damping = this.damping.val();
+        
         V forces = body.getForces();
         double massInv = body.getMassInv();
         
@@ -93,7 +97,7 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         V posPrev = body.getPosPrev();
         
         V a = forces.multiply(massInv);
-        V next = pos.multiply(2-DAMPING).subtract(posPrev.multiply(1-DAMPING)).add( a.multiply(dt*dt) );
+        V next = pos.multiply(2-damping).subtract(posPrev.multiply(1-damping)).add( a.multiply(dt*dt) );
         
         body.updatePosition(next);
         body.zeroForces();

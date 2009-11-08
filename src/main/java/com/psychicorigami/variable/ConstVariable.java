@@ -11,4 +11,8 @@ public class ConstVariable<T> implements Variable<T> {
         return val;
     }
     
+    public static<T> ConstVariable<T> const_var(T val) {
+        return new ConstVariable<T>(val);
+    }
+    
 }

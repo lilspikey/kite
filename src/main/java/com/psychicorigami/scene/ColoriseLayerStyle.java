@@ -16,14 +16,14 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 
 import com.psychicorigami.variable.Variable;
-import com.psychicorigami.variable.ConstVariable;
+import static com.psychicorigami.variable.ConstVariable.const_var;
 
 public class ColoriseLayerStyle implements LayerStyle {
-    private Variable<Float> opacity = new ConstVariable<Float>(0.5f);
-    private Variable<Color> color   = new ConstVariable<Color>(new Color(0x000000));
+    private Variable<Float> opacity = const_var(0.5f);
+    private Variable<Color> color   = const_var(new Color(0x000000));
     
     public void setOpacity(float opacity) {
-        setOpacity(new ConstVariable<Float>(opacity));
+        setOpacity(const_var(opacity));
     }
     
     public void setOpacity(Variable<Float> opacity) {
@@ -39,7 +39,7 @@ public class ColoriseLayerStyle implements LayerStyle {
     }
     
     public void setColor(Color color) {
-        setColor(new ConstVariable<Color>(color));
+        setColor(const_var(color));
     }
     
     public void setColor(Variable<Color> color) {
