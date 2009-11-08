@@ -11,6 +11,7 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
     private List<B> bodies = new ArrayList<B>();
     private List<Constraint> constraints = new ArrayList<Constraint>();
     private List<GlobalConstraint<B,V>> globalConstraints = new ArrayList<GlobalConstraint<B,V>>();
+    private List<Force> forces = new ArrayList<Force>();
     
     private V gravity = null;
     
@@ -49,6 +50,10 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         globalConstraints.add(constraint);
     }
     
+    public void add(Force force) {
+        forces.add(force);
+    }
+    
     public double applyConstraints() {
         double error = 0;
         for ( Constraint c: constraints ) {
@@ -72,6 +77,12 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         
         for ( Constraint contraint: multiBody.getConstraints() ) {
             add(contraint);
+        }
+    }
+    
+    public void updateForces() {
+        for ( Force force: forces ) {
+            force.update();
         }
     }
     
@@ -104,6 +115,7 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
     }
     
     public void update(double dt) {
+        updateForces();
         integrate(dt);
         double error = 0;
         int count = 0;

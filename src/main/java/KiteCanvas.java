@@ -119,7 +119,7 @@ public class KiteCanvas extends JPanel {
         space.add(new RopeConstraint<Body2D, Vector2D>(joint, bottomRope.getStart()));
         space.add(new RopeConstraint<Body2D, Vector2D>(kite.getBottomHook(), bottomRope.getEnd()));
         
-        //space.add(dragger);
+        space.add(dragger);
         
         // add a tail
         BufferedImage kiteImg = ImageIO.read(getClass().getResource("/images/kite.png"));
@@ -248,7 +248,6 @@ public class KiteCanvas extends JPanel {
     
     public void applyForces() {
         kite.applyWindForce(new Vector2D(WIND_SPEED, 0), dt);
-        dragger.update();
     }
     
     public void updateScene() {

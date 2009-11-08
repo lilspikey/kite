@@ -3,12 +3,12 @@ package com.psychicorigami.scene;
 import com.psychicorigami.physics.Vector2D;
 import com.psychicorigami.physics.Body2D;
 import com.psychicorigami.physics.MultiBody;
-import com.psychicorigami.physics.Constraint;
+import com.psychicorigami.physics.Force;
 
 import java.util.List;
 import java.util.ArrayList;
 
-public class PhysicsShapeDragger /*implements Constraint*/ {
+public class PhysicsShapeDragger implements Force {
     private MultiBody<Body2D, Vector2D> body = null;
     private List<Vector2D> distances = null;
     private Vector2D mousePos  = null;
