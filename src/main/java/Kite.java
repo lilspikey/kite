@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Arrays;
 
 public class Kite implements MultiBody<Body2D,Vector2D> {
-    private double AIR_RESISTANCE = 40;
-        
     private final Body2D topCorner;
     private final Body2D rightCorner;
     private final Body2D bottomCorner;
@@ -105,28 +103,6 @@ public class Kite implements MultiBody<Body2D,Vector2D> {
     
     public WindForce createWindForce(Vector2D windForce) {
         return new WindForce<Body2D,Vector2D>(centreOfPressure, new VectorTangentVariable<Vector2D>(rightCorner, leftCorner), const_var(windForce));
-    }
-    
-    public void applyWindForce(Vector2D windForce, double dt) {
-        Vector2D crossBar = rightCorner.getPos().subtract( leftCorner.getPos() ).unit();
-        
-        Vector2D airSpeed = new Vector2D();
-        List<Body2D> bodies = getBodies();
-        for ( Body2D b: bodies ) {
-            Vector2D v = b.getVelocity().divide(dt);
-            airSpeed = airSpeed.add(v);
-        }
-        
-        airSpeed = airSpeed.divide(-bodies.size());
-        
-        airSpeed = airSpeed.add(windForce);
-        
-        Vector2D force = crossBar.multiply(crossBar.dotProduct(airSpeed)).multiply(AIR_RESISTANCE);
-        
-        /*for ( Body2D b: bodies ) {
-            b.applyForce(force);
-        }*/
-        centreOfPressure.applyForce(force);
     }
     
     public void setInitialVelocity(Vector2D v, double dt) {
