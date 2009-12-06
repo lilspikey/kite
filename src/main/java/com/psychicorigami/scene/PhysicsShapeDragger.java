@@ -48,7 +48,7 @@ public class PhysicsShapeDragger implements Force {
             double length = diff.length();
             if ( length > 0 ) {
                 //System.out.println(diff);
-                Vector2D force = diff.divide(length*body.getMassInv()).multiply(75);
+                Vector2D force = diff.divide(length*body.getMassInv()).multiply(750);
                 //System.out.println(force.length());
                 body.applyForce(force);
                 //body.addConstrainedPosition(target);

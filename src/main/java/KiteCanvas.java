@@ -39,11 +39,11 @@ public class KiteCanvas extends JPanel {
     private Body2D baseLeft = null;
     private Body2D baseRight = null;
     
-    private int updateCount = 10;
-    private double dt = 0.04/updateCount;
+    private int updateCount = 2;
+    private double dt = 0.005/updateCount;
     private double rope_weight = 1;
     private double kiteMass = 10;
-    private double WIND_SPEED = 100;
+    private double WIND_SPEED = 1000;
     private double KITE_INITIAL_SPEED=100;
     
     private Vector2D force = new Vector2D();
@@ -53,7 +53,7 @@ public class KiteCanvas extends JPanel {
     private PhysicsShape currentShapeAtMousePos = null;
     private PhysicsShape dragShape    = null;
     
-    private GravityForce<Body2D, Vector2D> gravity = new GravityForce<Body2D, Vector2D>(new Vector2D(0, -10));
+    private GravityForce<Body2D, Vector2D> gravity = new GravityForce<Body2D, Vector2D>(new Vector2D(0, -10*10));
     
     private Sun sun = null;
     
