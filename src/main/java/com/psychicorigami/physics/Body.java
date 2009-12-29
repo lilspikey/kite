@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public abstract class Body<V extends Vector<V>> {
     private V pos = null;
     private V posPrev = null;
+    private V velocity = null;
     private V constrainedPositionSum = null;
     private int constrainedPositionCount = 0;
     
@@ -16,6 +17,7 @@ public abstract class Body<V extends Vector<V>> {
         this.pos = pos;
         this.posPrev = posPrev;
         
+        velocity = pos.zero();
         forces = pos.zero();
     }
     
@@ -70,12 +72,12 @@ public abstract class Body<V extends Vector<V>> {
         this.pos = pos;
     }
     
-    public void setVelocity(V v) {
-        posPrev = pos.subtract(v);
+    public void updateVelocity(double dt) {
+        this.velocity = pos.subtract(posPrev).divide(dt);
     }
     
-    public V getVelocity(double dt) {
-        return pos.subtract(posPrev).divide(dt);
+    public V getVelocity() {
+        return velocity;
     }
     
     public double getMassInv() {

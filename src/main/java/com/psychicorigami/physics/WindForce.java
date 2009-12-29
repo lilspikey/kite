@@ -22,7 +22,7 @@ public class WindForce<B extends Body<V>, V extends Vector<V>> implements Force 
         V surfaceNormal = this.surfaceNormal.val();
         V windForce     = this.windForce.val();
         
-        V airSpeed = centreOfPressure.getVelocity(dt);
+        V airSpeed = centreOfPressure.getVelocity();
         
         airSpeed = airSpeed.add(windForce);
         

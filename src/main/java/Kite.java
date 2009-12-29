@@ -107,7 +107,8 @@ public class Kite implements MultiBody<Body2D,Vector2D> {
     
     public void setInitialVelocity(Vector2D v, double dt) {
         for ( Body2D b: getBodies() ) {
-            b.setVelocity(v.multiply(dt));
+            Vector2D pos = b.getPos();
+            b.setPosPrev(pos.subtract(v.multiply(dt)));
         }
     }
 }

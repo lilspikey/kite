@@ -98,6 +98,7 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         V next = pos.multiply(2-damping).subtract(posPrev.multiply(1-damping)).add( a.multiply(dt*dt) );
         
         body.updatePosition(next);
+        body.updateVelocity(dt);
         body.zeroForces();
     }
     
