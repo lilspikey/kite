@@ -81,8 +81,10 @@ public class KiteCanvas extends JPanel {
             }
         });
         
-        space.addGlobalConstraint(new FloorConstraint());
-        space.add(gravity);
+        FloorConstraint floor = new FloorConstraint();
+        space.addGlobalConstraint(floor);
+        space.addForce(floor);
+        space.addForce(gravity);
         
         figure = new Figure(new Vector2D(0, 50));
         space.add(figure);
@@ -97,7 +99,7 @@ public class KiteCanvas extends JPanel {
         
         kiteRopes.add(mainRope);
         
-        space.add(new RopeConstraint<Body2D, Vector2D>(hand, mainRope.getStart()));
+        space.addConstraint(new RopeConstraint<Body2D, Vector2D>(hand, mainRope.getStart()));
         
         Body2D joint = mainRope.getEnd();
         Vector2D center = joint.getPos().add(new Vector2D(20, -10));
@@ -107,7 +109,7 @@ public class KiteCanvas extends JPanel {
         
         space.add(kite);
         gravity.add(kite);
-        space.add(kite.createWindForce(new Vector2D(WIND_SPEED, 0)));
+        space.addForce(kite.createWindForce(new Vector2D(WIND_SPEED, 0)));
         
         // now add rigging
         Rope2D topRope = new Rope2D(joint.getPos().add(new Vector2D(0.01,0.01)),
@@ -126,13 +128,13 @@ public class KiteCanvas extends JPanel {
         gravity.add(topRope);
         gravity.add(bottomRope);
         
-        space.add(new RopeConstraint<Body2D, Vector2D>(joint, topRope.getStart()));
-        space.add(new RopeConstraint<Body2D, Vector2D>(kite.getTopHook(), topRope.getEnd()));
+        space.addConstraint(new RopeConstraint<Body2D, Vector2D>(joint, topRope.getStart()));
+        space.addConstraint(new RopeConstraint<Body2D, Vector2D>(kite.getTopHook(), topRope.getEnd()));
         
-        space.add(new RopeConstraint<Body2D, Vector2D>(joint, bottomRope.getStart()));
-        space.add(new RopeConstraint<Body2D, Vector2D>(kite.getBottomHook(), bottomRope.getEnd()));
+        space.addConstraint(new RopeConstraint<Body2D, Vector2D>(joint, bottomRope.getStart()));
+        space.addConstraint(new RopeConstraint<Body2D, Vector2D>(kite.getBottomHook(), bottomRope.getEnd()));
         
-        space.add(dragger);
+        space.addForce(dragger);
         
         // add a tail
         BufferedImage kiteImg = ImageIO.read(getClass().getResource("/images/kite.png"));

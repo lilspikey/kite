@@ -31,16 +31,16 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         return bodies;
     }
     
-    public void add(Constraint constraint) {
+    public void addConstraint(Constraint constraint) {
         constraints.add(constraint);
     }
     
     public void addGlobalConstraint(GlobalConstraint<B,V> constraint) {
-        add(constraint);
+        addConstraint(constraint);
         globalConstraints.add(constraint);
     }
     
-    public void add(Force force) {
+    public void addForce(Force force) {
         forces.add(force);
     }
     
@@ -66,7 +66,7 @@ public abstract class Space<B extends Body<V>, V extends Vector<V>> {
         }
         
         for ( Constraint contraint: multiBody.getConstraints() ) {
-            add(contraint);
+            addConstraint(contraint);
         }
     }
     

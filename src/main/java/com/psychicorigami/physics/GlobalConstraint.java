@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.LinkedHashSet;
 
 public abstract class GlobalConstraint<B extends Body<V>, V extends Vector<V>> implements Constraint {
-    private Set<B> bodies = new LinkedHashSet<B>();
+    protected Set<B> bodies = new LinkedHashSet<B>();
     
     public void add(B body) {
         bodies.add(body);

@@ -74,8 +74,8 @@ public abstract class Body<V extends Vector<V>> {
         posPrev = pos.subtract(v);
     }
     
-    public V getVelocity() {
-        return pos.subtract(posPrev);
+    public V getVelocity(double dt) {
+        return pos.subtract(posPrev).divide(dt);
     }
     
     public double getMassInv() {
