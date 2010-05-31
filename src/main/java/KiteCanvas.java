@@ -19,7 +19,7 @@ import com.psychicorigami.scene.PhysicsShapeDragger;
 
 import com.psychicorigami.variable.Variable;
 
-public class KiteCanvas extends JPanel {
+public class KiteCanvas extends JApplet {
     private Space2D space = new Space2D();
     private Scene scene = new Scene();
     ColoriseLayerStyle layerTint = new ColoriseLayerStyle();
@@ -204,6 +204,13 @@ public class KiteCanvas extends JPanel {
                 //baseRight.setVelocity(new Vector2D(0, 0));
             }
         });
+        
+        final KiteCanvas canvas = this;
+        new Timer(40, new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                canvas.tick();
+            }
+        }).start();
     }
     
     public Vector2D transformedPosition(MouseEvent me) {
@@ -308,12 +315,6 @@ public class KiteCanvas extends JPanel {
         frame.pack();
         
         frame.setVisible(true);
-        
-        new Timer(40, new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                canvas.tick();
-            }
-        }).start();
     }
     
 }
