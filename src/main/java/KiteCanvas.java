@@ -19,7 +19,7 @@ import com.psychicorigami.scene.PhysicsShapeDragger;
 
 import com.psychicorigami.variable.Variable;
 
-public class KiteCanvas extends JApplet {
+public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
     private Scene scene = new Scene();
     ColoriseLayerStyle layerTint = new ColoriseLayerStyle();
