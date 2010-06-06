@@ -14,6 +14,7 @@ import com.psychicorigami.scene.ImageShape;
 import com.psychicorigami.scene.RopeShape;
 import com.psychicorigami.scene.Scene;
 import com.psychicorigami.scene.ColoriseLayerStyle;
+import com.psychicorigami.scene.HighlightLayerStyle;
 import com.psychicorigami.scene.DropShadowLayerStyle;
 import com.psychicorigami.scene.PhysicsShapeDragger;
 
@@ -22,10 +23,12 @@ import com.psychicorigami.variable.Variable;
 public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
     private Scene scene = new Scene();
-    ColoriseLayerStyle layerTint = new ColoriseLayerStyle();
+    private ColoriseLayerStyle layerTint = new ColoriseLayerStyle();
+    private HighlightLayerStyle highlight = new HighlightLayerStyle();
     
     private final int SCENE_BACKGROUND = 0;
     private final int SCENE_MIDDLEGROUND = 1;
+    private final int SCENE_FOREGROUND = 2;
     
     private Kite kite = null;
     private PhysicsShape kiteShape = null;
@@ -60,12 +63,14 @@ public class KiteCanvas extends JPanel {
     
     public KiteCanvas() throws IOException {
         
-        scene.addLayerStyle(new DropShadowLayerStyle(), SCENE_MIDDLEGROUND);
-        scene.addLayerStyle(layerTint, SCENE_MIDDLEGROUND);
+        scene.addLayerStyle(new DropShadowLayerStyle(), SCENE_FOREGROUND);
+        scene.addLayerStyle(layerTint, SCENE_FOREGROUND);
+        scene.addLayerStyle(highlight, SCENE_FOREGROUND);
+        scene.addLayerStyle(highlight, SCENE_MIDDLEGROUND);
         
         sun = new Sun(new Vector2D(300, 300));
         space.add(sun);
-        scene.add(sun, SCENE_BACKGROUND);
+        scene.add(sun, SCENE_MIDDLEGROUND);
         
         layerTint.setOpacity(new Variable<Float>() {
             public Float val() {
@@ -143,16 +148,16 @@ public class KiteCanvas extends JPanel {
         BufferedImage kiteImg = ImageIO.read(getClass().getResource("/images/kite.png"));
         
         kiteShape = new PhysicsShape(kiteImg, kite.getTopCorner(), kite.getBottomCorner());
-        scene.add(kiteShape, SCENE_MIDDLEGROUND);
+        scene.add(kiteShape, SCENE_FOREGROUND);
         
         Color ropeColor = new Color(0xFF664411);
         for ( Rope2D r: kiteRopes ) {
             RopeShape rope = new RopeShape(ropeColor);
             ropeShapes.add(rope);
-            scene.add(rope, SCENE_MIDDLEGROUND);
+            scene.add(rope, SCENE_FOREGROUND);
         }
         
-        scene.add(figure, SCENE_MIDDLEGROUND);
+        scene.add(figure, SCENE_FOREGROUND);
         
         BufferedImage skyImg = ImageIO.read(getClass().getResource("/images/sky.jpg"));
         scene.setBackground(skyImg, SCENE_BACKGROUND);
@@ -264,6 +269,7 @@ public class KiteCanvas extends JPanel {
             currentShapeAtMousePos = null;
             setCursor(null);
         }
+        highlight.setHighlighted(currentShapeAtMousePos);
     }
     
     public void changeRopeLength(double dx) {

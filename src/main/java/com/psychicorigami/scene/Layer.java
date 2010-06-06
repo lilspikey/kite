@@ -85,6 +85,10 @@ public class Layer {
         return null;
     }
     
+    public boolean contains(Shape shape) {
+        return shapes.contains(shape);
+    }
+    
     private BufferedImage clearBacking() {
         Graphics2D gb = backing.createGraphics();
 
