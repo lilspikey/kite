@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import com.psychicorigami.physics.*;
 
 public class FloorConstraint extends GlobalConstraint<Body2D,Vector2D> implements Force {
+    private double contactDistance = 0.01;
     
     @Override
     public double constrain(Body2D b) {
@@ -20,10 +21,10 @@ public class FloorConstraint extends GlobalConstraint<Body2D,Vector2D> implement
         for ( Body2D b: bodies ) {
             if ( !b.isImmovable() ) {
                 Vector2D pos = b.getPos();
-                if ( pos.y < 0 ) {
+                if ( pos.y <= contactDistance ) {
                     // handle friction
                     Vector2D velocity = b.getVelocity();
-                    Vector2D friction = new Vector2D(-velocity.x * 500, 0);
+                    Vector2D friction = new Vector2D(-velocity.x * 50000, 0);
                     
                     b.applyForce(friction);
                 }

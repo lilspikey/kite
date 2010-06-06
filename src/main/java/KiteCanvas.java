@@ -86,14 +86,14 @@ public class KiteCanvas extends JPanel {
         space.addForce(floor);
         space.addForce(gravity);
         
-        figure = new Figure(new Vector2D(0, 50));
+        figure = new Figure(new Vector2D(20, 50));
         space.add(figure);
         
         gravity.add(figure);
         
         Body2D hand = figure.getRightHand();
         
-        mainRope = new Rope2D(new Vector2D(hand.getPos().x+0.01, hand.getPos().y), new Vector2D(300, 70), 10, rope_weight);
+        mainRope = new Rope2D(new Vector2D(hand.getPos().x+0.01, hand.getPos().y), new Vector2D(300, 120), 10, rope_weight);
         space.add(mainRope);
         gravity.add(mainRope);
         
@@ -293,9 +293,6 @@ public class KiteCanvas extends JPanel {
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        int height = getHeight();
-        g2d.clearRect(0, 0, getWidth(), height);
         
         AffineTransform tx = createTransform();
         g2d.transform(tx);
