@@ -258,8 +258,12 @@ public class KiteCanvas extends JPanel {
     }
     
     private void updateCursor() {
+        if ( dragger.isDragging() ) {
+            return;
+        }
+        
         com.psychicorigami.scene.Shape shape = scene.findShapeAt((int)currentMousePos.x, (int)currentMousePos.y);
-        if ( (shape != null && (shape instanceof PhysicsShape)) || dragger.isDragging() ) {
+        if ( (shape != null && (shape instanceof PhysicsShape)) ) {
             if ( shape != null ) {
                 currentShapeAtMousePos = (PhysicsShape)shape;
             }
