@@ -84,6 +84,10 @@ public abstract class Body<V extends Vector<V>> {
         return massInv;
     }
     
+    public double getMass() {
+        return 1.0/massInv;
+    }
+    
     public void setMass(double mass) {
         this.massInv = 1.0/mass;
     }

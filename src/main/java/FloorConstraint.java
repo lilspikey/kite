@@ -24,7 +24,7 @@ public class FloorConstraint extends GlobalConstraint<Body2D,Vector2D> implement
                 if ( pos.y <= contactDistance ) {
                     // handle friction
                     Vector2D velocity = b.getVelocity();
-                    Vector2D friction = new Vector2D(-velocity.x * 50000, 0);
+                    Vector2D friction = new Vector2D(-velocity.x * 100 * b.getMass(), 0);
                     
                     b.applyForce(friction);
                 }
