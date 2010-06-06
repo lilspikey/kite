@@ -52,6 +52,7 @@ public class KiteCanvas extends JPanel {
     private Vector2D currentMousePos = new Vector2D(0, 0);
     private PhysicsShape currentShapeAtMousePos = null;
     private PhysicsShape dragShape    = null;
+    private double targetRopeLength = 0;
     
     private GravityForce<Body2D, Vector2D> gravity = new GravityForce<Body2D, Vector2D>(new Vector2D(0, -10*10));
     
@@ -96,6 +97,8 @@ public class KiteCanvas extends JPanel {
         mainRope = new Rope2D(new Vector2D(hand.getPos().x+0.01, hand.getPos().y), new Vector2D(300, 120), 10, rope_weight);
         space.add(mainRope);
         gravity.add(mainRope);
+        
+        targetRopeLength = mainRope.calcLength();
         
         kiteRopes.add(mainRope);
         
@@ -178,6 +181,13 @@ public class KiteCanvas extends JPanel {
             }
         });
         
+        addMouseWheelListener(new MouseWheelListener() {
+            public void mouseWheelMoved(MouseWheelEvent mwe) {
+                int rotated = mwe.getWheelRotation();
+                changeRopeLength(-rotated);
+            }
+        });
+        
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent ke) {
                 double dx = 0;
@@ -257,12 +267,16 @@ public class KiteCanvas extends JPanel {
     }
     
     public void changeRopeLength(double dx) {
-        double length = mainRope.calcLength();
-        mainRope.changeLength(length + dx);
+        double newLength = targetRopeLength + dx;
+        targetRopeLength = Math.max(50, Math.min(400, newLength));
     }
     
     public void tick() {
         for ( int i = 0; i < 10*updateCount; i++ ) {
+            double ropeDx = targetRopeLength - mainRope.calcLength();
+            double maxDx = 0.5;
+            ropeDx = Math.max(-maxDx, Math.min(maxDx, ropeDx));
+            mainRope.changeLength(mainRope.calcLength() + ropeDx);
             space.update(dt);
         }
         updateScene();
