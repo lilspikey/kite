@@ -60,6 +60,7 @@ public class KiteCanvas extends JPanel {
     private GravityForce<Body2D, Vector2D> gravity = new GravityForce<Body2D, Vector2D>(new Vector2D(0, -10*10));
     
     private Sun sun = null;
+    private Wind wind = null;
     
     public KiteCanvas() throws IOException {
         
@@ -71,6 +72,10 @@ public class KiteCanvas extends JPanel {
         sun = new Sun(new Vector2D(300, 300));
         space.add(sun);
         scene.add(sun, SCENE_MIDDLEGROUND);
+        
+        wind = new Wind(new Vector2D(60, 250), WIND_SPEED);
+        space.add(wind);
+        scene.add(wind, SCENE_FOREGROUND);
         
         layerTint.setOpacity(new Variable<Float>() {
             public Float val() {
@@ -117,7 +122,7 @@ public class KiteCanvas extends JPanel {
         
         space.add(kite);
         gravity.add(kite);
-        space.addForce(kite.createWindForce(new Vector2D(WIND_SPEED, 0)));
+        space.addForce(kite.createWindForce(wind.getWindForce()));
         
         // now add rigging
         Rope2D topRope = new Rope2D(joint.getPos().add(new Vector2D(0.01,0.01)),
@@ -244,6 +249,9 @@ public class KiteCanvas extends JPanel {
             }
             else if ( sun.getShapes().contains(shape) ) {
                 return sun;
+            }
+            else if ( wind.getShapes().contains(shape) ) {
+                return wind;
             }
         }
         return null;
