@@ -1,3 +1,4 @@
 *.class
 java.hprof.txt
-target
+/target
+/demo/*.jar

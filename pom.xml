@@ -3,7 +3,7 @@
     <name>Kite Physics</name>
     <groupId>com.psychicorigami.physics</groupId>
     <artifactId>kite-physics</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <build>
         <plugins>
             <plugin>
