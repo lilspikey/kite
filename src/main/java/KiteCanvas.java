@@ -20,6 +20,8 @@ import com.psychicorigami.scene.PhysicsShapeDragger;
 
 import com.psychicorigami.variable.Variable;
 
+import static com.psychicorigami.variable.ConstVariable.const_var;
+
 public class KiteCanvas extends JPanel {
     private Space2D space = new Space2D();
     private Scene scene = new Scene();
@@ -92,13 +94,27 @@ public class KiteCanvas extends JPanel {
             }
         });
         
+        NudgeForce leftEdge  = new NudgeForce(const_var(0), true);
+        NudgeForce rightEdge = new NudgeForce(
+            new Variable<Integer>() {
+                public Integer val() {
+                    return getWidth();
+                }
+            }
+        , false);
+        
         FloorConstraint floor = new FloorConstraint();
         space.addGlobalConstraint(floor);
         space.addForce(floor);
         space.addForce(gravity);
+        space.addForce(leftEdge);
+        space.addForce(rightEdge);
         
         figure = new Figure(new Vector2D(20, 50));
         space.add(figure);
+        
+        leftEdge.add(figure);
+        rightEdge.add(figure);
         
         gravity.add(figure);
         
