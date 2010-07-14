@@ -165,6 +165,18 @@ public class KiteCanvas extends JPanel {
         
         space.addForce(dragger);
         
+        space.addForce(new Force() {
+            public void update(double dt) {
+                Vector2D center = new Vector2D(getWidth()/2, getHeight()/2);
+                Vector2D diff = center.subtract(sun.getPos()).unit();
+                for ( Body2D b: sun.getBodies() ) {
+                    if ( !b.isImmovable() ) {
+                        b.applyForce(diff.divide(b.getMassInv()).multiply(100));
+                    }
+                }
+            }
+        });
+        
         // add a tail
         BufferedImage kiteImg = ImageIO.read(getClass().getResource("/images/kite.png"));
         
